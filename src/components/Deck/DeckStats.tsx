@@ -8,25 +8,31 @@ interface DeckStatsProps {
 }
 
 export default function DeckStats({ deck }: DeckStatsProps) {
-  const totalCards = deck.cards.reduce((total, card) => total + card.quantity, 0);
-  const uniqueCards = deck.cards.length;
-  const averageCMC = deck.cards.length > 0 
-    ? (deck.cards.reduce((total, card) => total + (card.card.cmc * card.quantity), 0) / totalCards).toFixed(1)
-    : 0;
+  const cards = Array.isArray(deck.cards) ? deck.cards : [];
 
-  // Calculate color distribution
-  const colorCounts = deck.cards.reduce((acc, deckCard) => {
-    deckCard.card.colors.forEach(color => {
-      acc[color] = (acc[color] || 0) + deckCard.quantity;
+  const totalCards = cards.reduce((total, card) => total + (card.quantity || 0), 0);
+  const uniqueCards = cards.length;
+
+  const averageCMC =
+    totalCards > 0
+      ? (
+          cards.reduce((total, card) => total + ((card.card?.cmc || 0) * (card.quantity || 0)), 0) / totalCards
+        ).toFixed(1)
+      : 0;
+
+  const colorCounts = cards.reduce((acc, deckCard) => {
+    const colors = deckCard.card?.colors || [];
+    colors.forEach(color => {
+      acc[color] = (acc[color] || 0) + (deckCard.quantity || 0);
     });
     return acc;
   }, {} as Record<string, number>);
 
-  // Calculate total deck value
-  const totalValue = deck.cards.reduce((total, deckCard) => {
-    const price = parseFloat(deckCard.card.prices?.usd || '0');
-    return total + (price * deckCard.quantity);
+  const totalValue = cards.reduce((total, deckCard) => {
+    const price = parseFloat(deckCard.card?.prices?.usd || '0');
+    return total + (price * (deckCard.quantity || 0));
   }, 0);
+
 
   const colorNames = {
     W: 'Branco',
