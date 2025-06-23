@@ -3,6 +3,8 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card as CardType } from '../../types';
 import { useAuth } from '../../contexts/AuthContext';
+import { getCardImage } from '../../services/getCardImage';
+
 
 interface CardItemProps {
   card: CardType;
@@ -45,21 +47,24 @@ export default function CardItem({ card, onClick, onAddToDeck, quantity }: CardI
         className="aspect-[5/7] bg-muted rounded-lg overflow-hidden relative"
         onClick={onClick}
       >
-        {card.image_uris?.normal ? (
-          <img
-            src={card.image_uris.normal}
-            alt={card.name}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-            loading="lazy"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted-foreground/20">
-            <div className="text-center p-4">
-              <div className="text-4xl mb-2">🃏</div>
-              <p className="text-sm font-medium">{card.name}</p>
+        {(() => {
+          const image = getCardImage(card);
+          return image ? (
+            <img
+              src={image}
+              alt={card.name}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+              loading="lazy"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted to-muted-foreground/20">
+              <div className="text-center p-4">
+                <div className="text-4xl mb-2">🃏</div>
+                <p className="text-sm font-medium">{card.name}</p>
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
         
         {/* Quantity badge */}
         {quantity && quantity > 1 && (

@@ -36,8 +36,12 @@ export default function Login() {
       setIsLoading(true);
       await login(data.email, data.password);
       navigate('/dashboard');
-    } catch (error) {
-      // Error is handled in the auth context
+    } catch (error: any) {
+      toast({
+        title: 'Login failed',
+        description: error.message || 'An error occurred during login.',
+        variant: 'destructive',
+      });
     } finally {
       setIsLoading(false);
     }

@@ -8,6 +8,10 @@ const SCRYFALL_API_BASE = 'https://api.scryfall.com';
 const api = axios.create({
   baseURL: SCRYFALL_API_BASE,
   timeout: 10000,
+  headers: {
+    'User-Agent': 'ManaVaultBuilder/1.0',
+    'Accept': '*/*',
+  },
 });
 
 // Add request interceptor for debugging

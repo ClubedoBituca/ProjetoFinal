@@ -12,6 +12,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useDeck } from '../contexts/DeckContext';
 import { toast } from '../hooks/use-toast';
 import { Search, Filter } from 'lucide-react';
+import { getCardImage } from '../services/getCardImage';
 
 const Index = () => {
   const { user } = useAuth();
@@ -234,20 +235,24 @@ const Index = () => {
                 </DialogHeader>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="aspect-[5/7] bg-muted rounded-lg overflow-hidden">
-                    {selectedCard.image_uris?.large ? (
-                      <img
-                        src={selectedCard.image_uris.large}
-                        alt={selectedCard.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <div className="text-center">
-                          <div className="text-6xl mb-4">🃏</div>
-                          <p className="text-lg font-medium">{selectedCard.name}</p>
+                    {(() => {
+                      const image = getCardImage(selectedCard);
+                      return image ? (
+                        <img
+                          src={image}
+                          alt={selectedCard.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-muted rounded-lg">
+                          <div className="text-center p-4">
+                            <div className="text-6xl mb-4">🃏</div>
+                            <p className="text-lg font-medium">{selectedCard.name}</p>
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      );
+                    })()}
+
                   </div>
                   
                   <div className="space-y-4">

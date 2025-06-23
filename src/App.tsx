@@ -11,6 +11,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
+import Deck from "./pages/Deck"; // 
+
+
 
 const queryClient = new QueryClient();
 
@@ -23,6 +26,8 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <Routes>
+
+              <Route path="/deck/:deckId" element={<Deck />} />
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />

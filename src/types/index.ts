@@ -21,12 +21,27 @@ export interface Card {
   set_name: string;
   collector_number: string;
   rarity: string;
+
   image_uris?: {
     small: string;
     normal: string;
     large: string;
     png: string;
   };
+
+  card_faces?: {
+    name: string;
+    mana_cost?: string;
+    type_line?: string;
+    oracle_text?: string;
+    image_uris?: {
+      small: string;
+      normal: string;
+      large: string;
+      png: string;
+    };
+  }[];
+
   prices: {
     usd?: string;
     usd_foil?: string;
