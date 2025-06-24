@@ -1,35 +1,36 @@
-import { Request, Response } from 'express';
-import fs from 'fs';
-import path from 'path';
+import { Request, Response } from "express";
+import fs from "fs";
+import path from "path";
+import { User } from "../types";
 
+const dbPath = path.join(__dirname, "..", "db", "usuarios.json");
 
-
-const dbPath = path.join(__dirname, '..', 'db', 'usuarios.json');
-
-export const listarUsuarios = (req: Request, res: Response): Response => {
+export const listarUsuarios = (req: Request, res: Response) => {
   try {
-    const data = fs.readFileSync(dbPath, 'utf-8');
+    const data = fs.readFileSync(dbPath, "utf-8");
     const usuarios = JSON.parse(data);
-    return res.json(usuarios);
+    res.json(usuarios);
   } catch (error) {
-    return res.status(500).json({ erro: 'Erro ao ler os usuários.' });
+    res.status(500).json({ erro: "Erro ao ler os usuários." });
   }
 };
 
-export const cadastrarUsuario = (req: Request, res: Response): Response => {
+export const cadastrarUsuario = (req: Request, res: Response) => {
   const { email, username, password } = req.body;
 
   if (!email || !username || !password) {
-    return res.status(400).json({ erro: 'Username, email e senha são obrigatórios.' });
+    res.status(400).json({ erro: "Username, email e senha são obrigatórios." });
+    return;
   }
 
   try {
-    const data = fs.readFileSync(dbPath, 'utf-8');
-    const usuarios = JSON.parse(data);
+    const data = fs.readFileSync(dbPath, "utf-8");
+    const usuarios: User[] = JSON.parse(data);
 
-    const emailJaExiste = usuarios.find((u: any) => u.email === email);
+    const emailJaExiste = usuarios.find((u) => u.email === email);
     if (emailJaExiste) {
-      return res.status(409).json({ erro: 'Email já cadastrado.' });
+      res.status(400).json({ erro: "Email já cadastrado." });
+      return;
     }
 
     const novoUsuario = {
@@ -37,40 +38,39 @@ export const cadastrarUsuario = (req: Request, res: Response): Response => {
       email,
       username,
       password,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     usuarios.push(novoUsuario);
-    fs.writeFileSync(dbPath, JSON.stringify(usuarios, null, 2), 'utf-8');
+    fs.writeFileSync(dbPath, JSON.stringify(usuarios, null, 2), "utf-8");
 
-    return res.status(201).json(novoUsuario);
+    res.status(201).json(novoUsuario);
   } catch (error) {
-    return res.status(500).json({ erro: 'Erro ao cadastrar o usuário.' });
+    res.status(500).json({ erro: "Erro ao cadastrar o usuário." });
   }
 };
 
-export const loginUsuario = (req: Request, res: Response): Response => {
+export const loginUsuario = (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ erro: 'Email e senha são obrigatórios.' });
+    res.status(400).json({ erro: "Email e senha são obrigatórios." });
+    return;
   }
 
   try {
-    const data = fs.readFileSync(dbPath, 'utf-8');
-    const usuarios = JSON.parse(data);
+    const data = fs.readFileSync(dbPath, "utf-8");
+    const usuarios: User[] = JSON.parse(data);
 
-    const usuario = usuarios.find(
-      (u: any) => u.email === email && u.password === password
-    );
+    const usuario = usuarios.find((u) => u.email === email && u.password === password);
 
     if (!usuario) {
-      return res.status(401).json({ erro: 'Credenciais inválidas.' });
+      res.status(401).json({ erro: "Credenciais inválidas." });
+      return;
     }
 
-    return res.json({ mensagem: 'Login bem-sucedido', usuario });
+    res.json({ mensagem: "Login bem-sucedido", usuario });
   } catch (error) {
-    return res.status(500).json({ erro: 'Erro ao processar o login.' });
+    res.status(500).json({ erro: "Erro ao processar o login." });
   }
 };
-
