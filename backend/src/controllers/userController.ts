@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import fs from "fs";
+import jwt from "jsonwebtoken";
 import path from "path";
+
 import { User } from "../types";
+import authConfig from "../config/auth";
 
 const dbPath = path.join(__dirname, "..", "db", "usuarios.json");
 
@@ -69,7 +72,11 @@ export const loginUsuario = (req: Request, res: Response) => {
       return;
     }
 
-    res.json({ mensagem: "Login bem-sucedido", usuario });
+    const token = jwt.sign({ userId: usuario.id }, authConfig.secret, {
+      expiresIn: authConfig.expiresIn,
+    });
+
+    res.json({ mensagem: "Login bem-sucedido", usuario, token });
   } catch (error) {
     res.status(500).json({ erro: "Erro ao processar o login." });
   }
