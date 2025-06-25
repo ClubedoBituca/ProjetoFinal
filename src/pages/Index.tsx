@@ -150,17 +150,23 @@ const Index = () => {
       <main className="container mx-auto px-4 py-6">
         {/* Hero Section */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold bg-magic-gradient bg-clip-text text-transparent mb-4">
-            Magic: The Gathering Deck Builder
-          </h1>
+          {/* H1 oculto apenas para SEO e leitores de tela */}
+          <h1 className="sr-only">Magic: The Gathering Deck Builder</h1>
+            <div className="flex justify-center mb-4">
+              <img
+                src="/Magictopo.webp"
+                alt="Magic: The Gathering Deck Builder logo"
+                className="mx-auto w-64 md:w-80 mb-4 drop-shadow-lg"
+              />
+            </div>
           <p className="text-xl text-muted-foreground mb-6">
-            Search, collect, and build the perfect deck
+            Pesquise, colete e construa o baralho perfeito
           </p>
           
           {/* Quick Search */}
           <div className="max-w-2xl mx-auto flex gap-2">
             <Input
-              placeholder="Quick search for cards..."
+              placeholder="Busca rápida por cartas..."
               value={quickSearch}
               onChange={(e) => setQuickSearch(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleQuickSearch()}
@@ -182,8 +188,8 @@ const Index = () => {
         {totalCards > 0 && (
           <div className="mb-6 text-center">
             <p className="text-muted-foreground">
-              Found {totalCards.toLocaleString()} cards
-              {hasMore && ` (showing ${cards.length})`}
+              {totalCards.toLocaleString()} cartas encontradas
+              {hasMore && ` (Mostrando ${cards.length})`}
             </p>
           </div>
         )}

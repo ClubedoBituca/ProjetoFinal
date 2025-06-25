@@ -26,6 +26,7 @@ export default function Login() {
   const {
     register,
     handleSubmit,
+    setValue, // ⬅️ adicione isso aqui
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -38,7 +39,7 @@ export default function Login() {
       navigate('/dashboard');
     } catch (error: any) {
       toast({
-        title: 'Login failed',
+        title: 'Falha de Acesso!',
         description: error.message || 'An error occurred during login.',
         variant: 'destructive',
       });
@@ -58,15 +59,14 @@ export default function Login() {
           >
             MTG Deck Builder
           </Link>
-          <p className="text-muted-foreground mt-2">Welcome back, Planeswalker</p>
+          <p className="text-muted-foreground mt-2">Bem vindo, Planeswalker!</p>
         </div>
 
         {/* Login Form */}
         <Card>
           <CardHeader>
-            <CardTitle>Sign In</CardTitle>
             <CardDescription>
-              Enter your credentials to access your decks
+              Insira suas credenciais para acessar seus decks
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -76,7 +76,7 @@ export default function Login() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="your@email.com"
+                  placeholder="exemplo@email.com"
                   {...register('email')}
                   disabled={isLoading}
                 />
@@ -86,11 +86,11 @@ export default function Login() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Senha</Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Enter your password"
+                  placeholder="Digite sua senha"
                   {...register('password')}
                   disabled={isLoading}
                 />
@@ -104,18 +104,18 @@ export default function Login() {
                 className="w-full" 
                 disabled={isLoading}
               >
-                {isLoading ? 'Signing in...' : 'Sign In'}
+                {isLoading ? 'Encontrando decks...' : 'Entrar'}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
-                Don't have an account?{' '}
+                Não tem uma conta?{' '}
                 <Link 
                   to="/register" 
                   className="text-primary hover:underline font-medium"
                 >
-                  Sign up
+                  Criar conta 
                 </Link>
               </p>
             </div>
@@ -126,20 +126,21 @@ export default function Login() {
         <Card className="bg-muted/50">
           <CardContent className="pt-6">
             <div className="text-center space-y-2">
-              <p className="text-sm font-medium">Demo Credentials</p>
+              <p className="text-sm font-medium">Credenciais TESTE</p>
               <div className="text-xs text-muted-foreground space-y-1">
-                <p>Email: demo@example.com</p>
-                <p>Password: demo123</p>
+                <p>Email: demo@mail.com</p>
+                <p>Senha: 12345678</p>
               </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  document.getElementById('email')?.setAttribute('value', 'demo@example.com');
-                  document.getElementById('password')?.setAttribute('value', 'demo123');
+                  setValue('email', 'demo@mail.com');
+                  setValue('password', '12345678');
+                  setTimeout(() => handleSubmit(onSubmit)(), 0); // aguarda atualização do state
                 }}
               >
-                Use Demo Account
+               {isLoading ? 'Signing in...' : 'Use Test Account'}
               </Button>
             </div>
           </CardContent>

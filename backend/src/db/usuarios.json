@@ -1,9 +1,16 @@
 [
   {
     "id": "user_1750694995710",
-    "email": "lucas@mail.com",
-    "username": "lulu",
+    "email": "demo@mail.com",
+    "username": "DEMO",
     "password": "12345678",
     "createdAt": "2025-06-23T16:09:55.710Z"
+  },
+  {
+    "id": "user_1750812926767",
+    "email": "lucas.kilowatt@gmail.com",
+    "username": "MagicMaster",
+    "password": "magic123",
+    "createdAt": "2025-06-25T00:55:26.767Z"
   }
 ]
