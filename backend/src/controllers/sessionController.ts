@@ -2,17 +2,36 @@ import { Request, Response } from "express";
 import fs from "fs";
 import jwt from "jsonwebtoken";
 import path from "path";
+import { z } from "zod";
 
 import authConfig from "../config/auth";
 import { User } from "../types";
 
 const dbPath = path.join(__dirname, "..", "db", "usuarios.json");
 
+const loginSchema = z.object({
+  email: z.string().email("Email inválido"),
+  password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
+});
+
 export const login = (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
     res.status(400).json({ erro: "Email e senha são obrigatórios." });
+    return;
+  }
+
+  const result = loginSchema.safeParse({ email, password });
+
+  if (!result.success) {
+    let errorMsg = "";
+
+    result.error.issues.forEach(({ message }) => {
+      errorMsg += message + ". ";
+    });
+
+    res.status(400).json({ erro: errorMsg.trim() });
     return;
   }
 
