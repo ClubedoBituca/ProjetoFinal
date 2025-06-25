@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
@@ -11,7 +12,7 @@ const dbPath = path.join(__dirname, "..", "db", "usuarios.json");
 export const listarUsuarios = (_req: Request, res: Response) => {
   try {
     const data = fs.readFileSync(dbPath, "utf-8");
-    const usuarios = JSON.parse(data);
+    const usuarios = JSON.parse(data).map((usuario: User) => ({ ...usuario, password: undefined }));
     res.json(usuarios);
   } catch (error) {
     res.status(500).json({ erro: "Erro ao ler os usuários." });
@@ -24,7 +25,7 @@ const registerSchema = z.object({
   password: z.string(withRequired("Senha")).min(6, "A senha deve ter pelo menos 6 caracteres"),
 });
 
-export const cadastrarUsuario = (req: Request, res: Response) => {
+export const cadastrarUsuario = async (req: Request, res: Response) => {
   const { email, username, password } = req.body;
 
   const result = registerSchema.safeParse({ email, username, password });
@@ -50,18 +51,19 @@ export const cadastrarUsuario = (req: Request, res: Response) => {
       return;
     }
 
+    const passwordHash = await bcrypt.hash(password, 10);
+
     const novoUsuario = {
       id: `user_${Date.now()}`,
       email,
       username,
-      password,
+      password: passwordHash,
       createdAt: new Date().toISOString(),
     };
 
     usuarios.push(novoUsuario);
     fs.writeFileSync(dbPath, JSON.stringify(usuarios, null, 2), "utf-8");
-
-    res.status(201).json(novoUsuario);
+    res.status(201).json({ ...novoUsuario, password: undefined });
   } catch (error) {
     res.status(500).json({ erro: "Erro ao cadastrar o usuário." });
   }

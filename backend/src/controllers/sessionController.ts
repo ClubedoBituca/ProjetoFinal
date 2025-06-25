@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import fs from "fs";
 import jwt from "jsonwebtoken";
@@ -15,7 +16,7 @@ const loginSchema = z.object({
   password: z.string(withRequired("Senha")).min(6, "A senha deve ter no mínimo 6 caracteres"),
 });
 
-export const login = (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
 
   const result = loginSchema.safeParse({ email, password });
@@ -35,9 +36,11 @@ export const login = (req: Request, res: Response) => {
     const data = fs.readFileSync(dbPath, "utf-8");
     const usuarios: User[] = JSON.parse(data);
 
-    const usuario = usuarios.find((u) => u.email === email && u.password === password);
+    const usuario = usuarios.find((u) => u.email === email);
 
-    if (!usuario) {
+    const passwordMatches = !!usuario && (await bcrypt.compare(password, usuario.password));
+
+    if (!usuario || !passwordMatches) {
       res.status(401).json({ erro: "Credenciais inválidas." });
       return;
     }
@@ -46,7 +49,7 @@ export const login = (req: Request, res: Response) => {
       expiresIn: authConfig.expiresIn,
     });
 
-    res.json({ mensagem: "Login bem-sucedido", usuario, token });
+    res.json({ mensagem: "Login bem-sucedido", usuario: { ...usuario, password: undefined }, token });
   } catch (error) {
     res.status(500).json({ erro: "Erro ao processar o login." });
   }
