@@ -1,12 +1,14 @@
 import { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
+import z from "zod";
 
 import { User } from "../types";
+import { withRequired } from "../utils/validations";
 
 const dbPath = path.join(__dirname, "..", "db", "usuarios.json");
 
-export const listarUsuarios = (req: Request, res: Response) => {
+export const listarUsuarios = (_req: Request, res: Response) => {
   try {
     const data = fs.readFileSync(dbPath, "utf-8");
     const usuarios = JSON.parse(data);
@@ -16,11 +18,25 @@ export const listarUsuarios = (req: Request, res: Response) => {
   }
 };
 
+const registerSchema = z.object({
+  email: z.string(withRequired("Email")).email("Email inválido"),
+  username: z.string(withRequired("Username")).min(3, "O username deve ter pelo menos 3 caracteres"),
+  password: z.string(withRequired("Senha")).min(6, "A senha deve ter pelo menos 6 caracteres"),
+});
+
 export const cadastrarUsuario = (req: Request, res: Response) => {
   const { email, username, password } = req.body;
 
-  if (!email || !username || !password) {
-    res.status(400).json({ erro: "Username, email e senha são obrigatórios." });
+  const result = registerSchema.safeParse({ email, username, password });
+
+  if (!result.success) {
+    let errorMsg = "";
+
+    result.error.issues.forEach((issue) => {
+      errorMsg += issue.message + ". ";
+    });
+
+    res.status(400).json({ erro: errorMsg.trim() });
     return;
   }
 
