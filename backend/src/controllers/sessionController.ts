@@ -6,21 +6,17 @@ import { z } from "zod";
 
 import authConfig from "../config/auth";
 import { User } from "../types";
+import { withRequired } from "../utils/validations";
 
 const dbPath = path.join(__dirname, "..", "db", "usuarios.json");
 
 const loginSchema = z.object({
-  email: z.string().email("Email inválido"),
-  password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
+  email: z.string(withRequired("Email")).email("Email inválido"),
+  password: z.string(withRequired("Senha")).min(6, "A senha deve ter no mínimo 6 caracteres"),
 });
 
 export const login = (req: Request, res: Response) => {
   const { email, password } = req.body;
-
-  if (!email || !password) {
-    res.status(400).json({ erro: "Email e senha são obrigatórios." });
-    return;
-  }
 
   const result = loginSchema.safeParse({ email, password });
 
