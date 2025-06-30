@@ -29,12 +29,12 @@ export default function Dashboard() {
       setNewDeckDescription('');
       setShowCreateDialog(false);
     } catch (error) {
-      console.error('Error creating deck:', error);
+      console.error('Erro ao criar o deck:', error);
     }
   };
 
   const handleDeleteDeck = async (deckId: string) => {
-    if (window.confirm('Are you sure you want to delete this deck?')) {
+    if (window.confirm('Tem certeza que deseja apagar esse deck?')) {
       await deleteDeck(deckId);
     }
   };
@@ -48,10 +48,10 @@ export default function Dashboard() {
       <div className="min-h-screen bg-background">
         <Header />
         <div className="container mx-auto px-4 py-8 text-center">
-          <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
-          <p className="text-muted-foreground mb-6">Please log in to access your dashboard.</p>
+          <h1 className="text-2xl font-bold mb-4">Acesso Negado!</h1>
+          <p className="text-muted-foreground mb-6">Entre para contruir seus decks!</p>
           <Button asChild>
-            <Link to="/login">Login</Link>
+            <Link to="/login">Entrar</Link>
           </Button>
         </div>
       </div>
@@ -66,10 +66,10 @@ export default function Dashboard() {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            Welcome back, {user.username}!
+            Bem vindo de volta, {user.username}!
           </h1>
           <p className="text-muted-foreground">
-            Manage your Magic: The Gathering decks and collection
+            Gerencie seus decks e coleção de Magic: The Gathering
           </p>
         </div>
 
@@ -81,7 +81,7 @@ export default function Dashboard() {
                 <Grid2x2 className="w-8 h-8 text-primary" />
                 <div>
                   <p className="text-2xl font-bold">{decks.length}</p>
-                  <p className="text-sm text-muted-foreground">Total Decks</p>
+                  <p className="text-sm text-muted-foreground">Todos os Decks</p>
                 </div>
               </div>
             </CardContent>
@@ -95,7 +95,7 @@ export default function Dashboard() {
                   <p className="text-2xl font-bold">
                     {decks.reduce((total, deck) => total + getTotalCards(deck), 0)}
                   </p>
-                  <p className="text-sm text-muted-foreground">Total Cards</p>
+                  <p className="text-sm text-muted-foreground">Todas as Cartas</p>
                 </div>
               </div>
             </CardContent>
@@ -109,7 +109,7 @@ export default function Dashboard() {
                   <p className="text-2xl font-bold">
                     {decks.filter(deck => getTotalCards(deck) >= 60).length}
                   </p>
-                  <p className="text-sm text-muted-foreground">Complete Decks</p>
+                  <p className="text-sm text-muted-foreground">Decks Completos</p>
                 </div>
               </div>
             </CardContent>
@@ -118,25 +118,25 @@ export default function Dashboard() {
 
         {/* Decks Section */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold">My Decks</h2>
+          <h2 className="text-2xl font-semibold">Meus Decks</h2>
           
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
               <Button className="flex items-center space-x-2">
                 <Plus className="w-4 h-4" />
-                <span>New Deck</span>
+                <span>Novo Deck</span>
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Create New Deck</DialogTitle>
+                <DialogTitle>Criar Novo Deck</DialogTitle>
               </DialogHeader>
               <form onSubmit={handleCreateDeck} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="deck-name">Deck Name</Label>
+                  <Label htmlFor="deck-name">Nome do Deck</Label>
                   <Input
                     id="deck-name"
-                    placeholder="Enter deck name..."
+                    placeholder="Ex: Deck Reanimar..."
                     value={newDeckName}
                     onChange={(e) => setNewDeckName(e.target.value)}
                     required
@@ -144,10 +144,10 @@ export default function Dashboard() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="deck-description">Description (optional)</Label>
+                  <Label htmlFor="deck-description">Descrição (opcional)</Label>
                   <Textarea
                     id="deck-description"
-                    placeholder="Describe your deck strategy..."
+                    placeholder="Descreva a estratégia do seu deck..."
                     value={newDeckDescription}
                     onChange={(e) => setNewDeckDescription(e.target.value)}
                     rows={3}
@@ -160,10 +160,10 @@ export default function Dashboard() {
                     variant="outline" 
                     onClick={() => setShowCreateDialog(false)}
                   >
-                    Cancel
+                    Cancelar
                   </Button>
                   <Button type="submit" disabled={!newDeckName.trim()}>
-                    Create Deck
+                    Criar Deck
                   </Button>
                 </div>
               </form>
@@ -176,13 +176,13 @@ export default function Dashboard() {
           <Card className="text-center py-12">
             <CardContent>
               <div className="text-6xl mb-4">🃏</div>
-              <h3 className="text-xl font-semibold mb-2">No decks yet</h3>
+              <h3 className="text-xl font-semibold mb-2">Nenhum Deck Salvo :(</h3>
               <p className="text-muted-foreground mb-6">
-                Create your first deck to start building your collection
+                Crie seu primeiro baralho para começar a construir sua coleção
               </p>
               <Button onClick={() => setShowCreateDialog(true)}>
                 <Plus className="w-4 h-4 mr-2" />
-                Create Your First Deck
+                Criar Novo Deck
               </Button>
             </CardContent>
           </Card>
@@ -213,11 +213,11 @@ export default function Dashboard() {
                 <CardContent>
                   <div className="space-y-3">
                     <div className="flex justify-between text-sm">
-                      <span>Total Cards:</span>
+                      <span>Número de cartas:</span>
                       <span className="font-medium">{getTotalCards(deck)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
-                      <span>Unique Cards:</span>
+                      <span>Cartas únicas:</span>
                       <span className="font-medium">{deck.cards.length}</span>
                     </div>
                     <div className="flex justify-between text-sm">
@@ -225,7 +225,7 @@ export default function Dashboard() {
                       <span className={`font-medium ${
                         getTotalCards(deck) >= 60 ? 'text-green-600' : 'text-orange-600'
                       }`}>
-                        {getTotalCards(deck) >= 60 ? 'Complete' : 'In Progress'}
+                        {getTotalCards(deck) >= 60 ? 'Completo' : 'Em progresso'}
                       </span>
                     </div>
                     
@@ -235,7 +235,7 @@ export default function Dashboard() {
                         className="w-full"
                       >
                         <Link to={`/deck/${deck.id}`}>
-                          View & Edit Deck
+                          Editar Deck
                         </Link>
                       </Button>
                     </div>

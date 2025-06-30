@@ -31,8 +31,8 @@ export default function CardGrid({ cards, onCardClick, onAddToDeck, isLoading }:
     return (
       <div className="text-center py-12">
         <div className="text-6xl mb-4">🃏</div>
-        <h3 className="text-xl font-semibold mb-2">No cards found</h3>
-        <p className="text-muted-foreground">Try adjusting your search filters</p>
+        <h3 className="text-xl font-semibold mb-2">Nenhuma Carta Encontrada!</h3>
+        <p className="text-muted-foreground">Tente ajustar seus filtros!</p>
       </div>
     );
   }

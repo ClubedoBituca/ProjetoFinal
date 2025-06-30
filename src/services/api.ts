@@ -144,5 +144,3 @@ function buildSearchQuery(filters: SearchFilters): string {
 
   return queries.length > 0 ? queries.join(' ') : '*';
 }
-
-export default api;

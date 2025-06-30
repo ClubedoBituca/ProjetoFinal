@@ -69,18 +69,18 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch, isLo
   return (
     <Card className="p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Search Filters</h2>
+        <h2 className="text-xl font-semibold">Filtros de busca</h2>
         <Button variant="outline" onClick={resetFilters}>
-          Reset
+          Limpar
         </Button>
       </div>
 
       {/* Card Name */}
       <div className="space-y-2">
-        <Label htmlFor="card-name">Card Name</Label>
+        <Label htmlFor="card-name">Nome da Carta:</Label>
         <Input
           id="card-name"
-          placeholder="Enter card name..."
+          placeholder="Digite o nome de uma carta..."
           value={filters.name}
           onChange={(e) => updateFilters({ name: e.target.value })}
           onKeyDown={(e) => e.key === 'Enter' && onSearch()}
@@ -89,7 +89,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch, isLo
 
       {/* Colors */}
       <div className="space-y-3">
-        <Label>Colors</Label>
+        <Label>Cores</Label>
         <div className="flex flex-wrap gap-3">
           {COLORS.map((color) => (
             <div key={color.id} className="flex items-center space-x-2">
@@ -112,13 +112,13 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch, isLo
 
       {/* Type */}
       <div className="space-y-2">
-        <Label htmlFor="card-type">Card Type</Label>
+        <Label htmlFor="card-type">Tipo de Carta:</Label>
         <Select value={filters.type} onValueChange={(value) => updateFilters({ type: value })}>
           <SelectTrigger>
-            <SelectValue placeholder="Select type..." />
+            <SelectValue placeholder="Selecione um tipo..." />
           </SelectTrigger>
           <SelectContent className="bg-popover">
-            <SelectItem value="any">Any Type</SelectItem>
+            <SelectItem value="any">Todos</SelectItem>
             {TYPES.map((type) => (
               <SelectItem key={type} value={type.toLowerCase()}>
                 {type}
@@ -130,7 +130,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch, isLo
 
       {/* Rarity */}
       <div className="space-y-2">
-        <Label htmlFor="rarity">Rarity</Label>
+        <Label htmlFor="rarity">Raridade:</Label>
         <Select value={filters.rarity} onValueChange={(value) => updateFilters({ rarity: value })}>
           <SelectTrigger>
             <SelectValue />
@@ -147,7 +147,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch, isLo
 
       {/* Set */}
       <div className="space-y-2">
-        <Label htmlFor="set">Set Code</Label>
+        <Label htmlFor="set">Código:</Label>
         <Input
           id="set"
           placeholder="e.g., DOM, GRN, RNA..."
@@ -158,7 +158,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch, isLo
 
       {/* Mana Cost */}
       <div className="space-y-3">
-        <Label>Mana Cost (CMC)</Label>
+        <Label>Custo de Mana (CMC):</Label>
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
             <Label htmlFor="min-cmc" className="text-sm text-muted-foreground">Min</Label>
@@ -195,7 +195,7 @@ export default function SearchFilters({ filters, onFiltersChange, onSearch, isLo
         className="w-full" 
         disabled={isLoading}
       >
-        {isLoading ? 'Searching...' : 'Search Cards'}
+        {isLoading ? 'Procurando cartas...' : 'Buscar'}
       </Button>
     </Card>
   );

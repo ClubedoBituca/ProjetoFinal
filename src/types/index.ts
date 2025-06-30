@@ -9,6 +9,7 @@ export interface User {
 export interface Card {
   id: string;
   name: string;
+  lang?: string; // 👈 adicione essa linha
   mana_cost: string;
   cmc: number;
   type_line: string;
@@ -94,3 +95,4 @@ export interface DeckContextType {
   setCurrentDeck: (deck: Deck | null) => void;
   isLoading: boolean;
 }
+

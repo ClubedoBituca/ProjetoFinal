@@ -113,7 +113,7 @@ export default function CardItem({ card, onClick, onAddToDeck, quantity }: CardI
               onAddToDeck();
             }}
           >
-            Add to Deck
+            Adicionar ao Deck
           </Button>
         )}
       </div>

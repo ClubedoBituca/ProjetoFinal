@@ -38,7 +38,7 @@ export default function Header() {
               <Button variant="ghost" asChild>
                 <Link to="/" className="flex items-center space-x-2">
                   <Search className="w-4 h-4" />
-                  <span>Search Cards</span>
+                  <span>Procurar Cartas</span>
                 </Link>
               </Button>
               
@@ -46,7 +46,7 @@ export default function Header() {
                 <Button variant="ghost" asChild>
                   <Link to="/dashboard" className="flex items-center space-x-2">
                     <Grid2x2 className="w-4 h-4" />
-                    <span>My Decks</span>
+                    <span>Meus Decks</span>
                   </Link>
                 </Button>
               )}
@@ -83,10 +83,10 @@ export default function Header() {
             ) : (
               <div className="flex items-center space-x-2">
                 <Button variant="ghost" asChild>
-                  <Link to="/login">Login</Link>
+                  <Link to="/login">Entrar</Link>
                 </Button>
                 <Button asChild>
-                  <Link to="/register">Register</Link>
+                  <Link to="/register">Criar Conta</Link>
                 </Button>
               </div>
             )}

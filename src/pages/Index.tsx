@@ -13,6 +13,9 @@ import { useDeck } from '../contexts/DeckContext';
 import { toast } from '../hooks/use-toast';
 import { Search, Filter } from 'lucide-react';
 import { getCardImage } from '../services/getCardImage';
+import { fetchCardInPortuguese } from '../services/getCardPortuguese';
+
+
 
 const Index = () => {
   const { user } = useAuth();
@@ -103,15 +106,15 @@ const Index = () => {
   };
 
   const handleCardClick = (card: Card) => {
-    setSelectedCard(card);
-    setShowCardModal(true);
+    setSelectedCard(card);  // Mostra a carta original (em inglês)
+    setShowCardModal(true); // Abre o modal
   };
 
   const handleAddToDeck = (card: Card) => {
     if (!user) {
       toast({
-        title: "Authentication required",
-        description: "Please log in to add cards to decks",
+        title: "Falha de Autenticação",
+        description: "Entre para adicionar cartas ao deck",
         variant: "destructive",
       });
       return;
@@ -119,8 +122,8 @@ const Index = () => {
 
     if (decks.length === 0) {
       toast({
-        title: "No decks available",
-        description: "Please create a deck first",
+        title: "Nenhum deck disponível",
+        description: "Crie um deck antes!",
         variant: "destructive",
       });
       return;
@@ -220,7 +223,7 @@ const Index = () => {
         <Dialog open={showFilters} onOpenChange={setShowFilters}>
           <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Advanced Search</DialogTitle>
+              <DialogTitle>Busca Avançada</DialogTitle>
             </DialogHeader>
             <SearchFilters
               filters={filters}
@@ -237,8 +240,14 @@ const Index = () => {
             {selectedCard && (
               <>
                 <DialogHeader>
-                  <DialogTitle>{selectedCard.name}</DialogTitle>
+                  <DialogTitle>
+                    {selectedCard.name}
+                    {selectedCard.lang === 'pt' && (
+                      <span className="ml-2 text-sm text-muted-foreground">(pt)</span>
+                    )}
+                  </DialogTitle>
                 </DialogHeader>
+
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="aspect-[5/7] bg-muted rounded-lg overflow-hidden">
                     {(() => {
@@ -263,37 +272,60 @@ const Index = () => {
                   
                   <div className="space-y-4">
                     <div>
-                      <h3 className="font-semibold mb-2">Details</h3>
+                      <h3 className="font-semibold mb-2">Detalhes</h3>
                       <div className="space-y-2 text-sm">
-                        <p><strong>Type:</strong> {selectedCard.type_line}</p>
-                        <p><strong>Mana Cost:</strong> {selectedCard.mana_cost || 'None'}</p>
+                        <p><strong>Tipo:</strong> {selectedCard.type_line}</p>
+                        <p><strong>Custo de Mana:</strong> {selectedCard.mana_cost || 'None'}</p>
                         <p><strong>CMC:</strong> {selectedCard.cmc}</p>
-                        <p><strong>Rarity:</strong> {selectedCard.rarity}</p>
-                        <p><strong>Set:</strong> {selectedCard.set_name}</p>
+                        <p><strong>Raridade:</strong> {selectedCard.rarity}</p>
+                        <p><strong>Coleção:</strong> {selectedCard.set_name}</p>
                         {selectedCard.power && selectedCard.toughness && (
                           <p><strong>P/T:</strong> {selectedCard.power}/{selectedCard.toughness}</p>
                         )}
                         {selectedCard.prices?.usd && (
-                          <p><strong>Price:</strong> ${selectedCard.prices.usd}</p>
+                          <p><strong>Preço (em dólares):</strong> ${selectedCard.prices.usd}</p>
                         )}
                       </div>
                     </div>
                     
                     {selectedCard.oracle_text && (
                       <div>
-                        <h3 className="font-semibold mb-2">Oracle Text</h3>
+                        <h3 className="font-semibold mb-2">Descrição:</h3>
                         <p className="text-sm whitespace-pre-line">
                           {selectedCard.oracle_text}
                         </p>
                       </div>
                     )}
+                    {/* Botão para tradução */}
+                    <Button
+                      variant="secondary"
+                      className="mt-4 mx-auto block"
+                      onClick={async () => {
+                        const translated = await fetchCardInPortuguese(selectedCard!);
+                        if (translated.lang === 'pt') {
+                          toast({
+                            title: 'Carta traduzida!',
+                            description: 'Versão em português exibida.',
+                          });
+                        } else {
+                          toast({
+                            title: 'Tradução não encontrada',
+                            description: 'Mostrando versão original em inglês.',
+                            variant: 'destructive',
+                          });
+                        }
+                        setSelectedCard(translated);
+                      }}
+                    >
+                      Traduzir
+                    </Button>
                     
                     {user && decks.length > 0 && (
                       <div className="space-y-3">
-                        <h3 className="font-semibold">Add to Deck</h3>
+                        <h3 className="font-semibold">Adicionar ao Deck</h3>
                         <Select value={selectedDeckId} onValueChange={setSelectedDeckId}>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select a deck..." />
+                            <SelectValue placeholder="Selecione o Deck..." />
                           </SelectTrigger>
                           <SelectContent className="bg-popover">
                             {decks.map((deck) => (
@@ -308,7 +340,7 @@ const Index = () => {
                           disabled={!selectedDeckId}
                           className="w-full"
                         >
-                          Add to Deck
+                          Adicionar ao Deck
                         </Button>
                       </div>
                     )}

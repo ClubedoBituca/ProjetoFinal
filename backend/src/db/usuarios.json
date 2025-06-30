@@ -12,5 +12,19 @@
     "username": "MagicMaster",
     "password": "$2b$10$rMSUbE8/RpRUi4ZOiyIlXeWGrDjDaJxvKxRQDPjNeVnvv3sUisPvi",
     "createdAt": "2025-06-25T00:55:26.767Z"
+  },
+  {
+    "id": "user_1750883426751",
+    "email": "teste@mail.com",
+    "username": "Teste",
+    "password": "$2b$10$9oDgSNxmihBCfebDf8.TvuMjMXJM2OjyNK80285mHaQWURpneEdRC",
+    "createdAt": "2025-06-25T20:30:26.751Z"
+  },
+  {
+    "id": "user_1750884685082",
+    "email": "nova@mail.com",
+    "username": "NovaConta",
+    "password": "$2b$10$KrbGSjGFA6fgWuX9VI/7cOTbfqewaphvAxQAv2kzpv5PfT3.7/WeW",
+    "createdAt": "2025-06-25T20:51:25.082Z"
   }
 ]
