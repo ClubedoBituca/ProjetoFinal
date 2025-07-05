@@ -44,7 +44,7 @@ export const login = async (req: Request, res: Response) => {
       return;
     }
 
-    const token = signToken({ userId: usuario.id });
+    const token = signToken(usuario.id);
 
     res.json({ mensagem: "Login bem-sucedido", usuario: { ...usuario, password: undefined }, token });
   } catch (error) {

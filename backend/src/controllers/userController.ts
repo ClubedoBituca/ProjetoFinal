@@ -65,7 +65,7 @@ export const cadastrarUsuario = async (req: Request, res: Response) => {
     usuarios.push(novoUsuario);
     fs.writeFileSync(dbPath, JSON.stringify(usuarios, null, 2), "utf-8");
 
-    const token = signToken({ userId: novoUsuario.id });
+    const token = signToken(novoUsuario.id);
 
     res.status(201).json({ usuario: { ...novoUsuario, password: undefined }, token });
   } catch (error) {
