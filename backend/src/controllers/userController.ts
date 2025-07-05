@@ -6,6 +6,7 @@ import z from "zod";
 
 import { User } from "../types";
 import { withRequired } from "../utils/validations";
+import { signToken } from "../services/authService";
 
 const dbPath = path.join(__dirname, "..", "db", "usuarios.json");
 
@@ -63,7 +64,10 @@ export const cadastrarUsuario = async (req: Request, res: Response) => {
 
     usuarios.push(novoUsuario);
     fs.writeFileSync(dbPath, JSON.stringify(usuarios, null, 2), "utf-8");
-    res.status(201).json({ ...novoUsuario, password: undefined });
+
+    const token = signToken({ userId: novoUsuario.id });
+
+    res.status(201).json({ usuario: { ...novoUsuario, password: undefined }, token });
   } catch (error) {
     res.status(500).json({ erro: "Erro ao cadastrar o usuário." });
   }
