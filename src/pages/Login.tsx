@@ -26,7 +26,7 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    setValue, // ⬅️ adicione isso aqui
+    setValue,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -37,10 +37,10 @@ export default function Login() {
       setIsLoading(true);
       await login(data.email, data.password);
       navigate('/dashboard');
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: 'Falha de Acesso!',
-        description: error.message || 'An error occurred during login.',
+        description: error?.message || 'An error occurred during login.',
         variant: 'destructive',
       });
     } finally {

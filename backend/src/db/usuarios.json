@@ -3,14 +3,14 @@
     "id": "user_1750694995710",
     "email": "demo@mail.com",
     "username": "DEMO",
-    "password": "12345678",
+    "password": "$2b$10$28UOByxiQO7JGXstMqAguuF1zlSb72pZ4EpxSpjC93b.dQQjJVjhO",
     "createdAt": "2025-06-23T16:09:55.710Z"
   },
   {
     "id": "user_1750812926767",
     "email": "lucas.kilowatt@gmail.com",
     "username": "MagicMaster",
-    "password": "magic123",
+    "password": "$2b$10$rMSUbE8/RpRUi4ZOiyIlXeWGrDjDaJxvKxRQDPjNeVnvv3sUisPvi",
     "createdAt": "2025-06-25T00:55:26.767Z"
   }
 ]
