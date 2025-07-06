@@ -1,8 +1,9 @@
-import React from 'react';
+import { Trash2 } from 'lucide-react';
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Trash2 } from 'lucide-react';
+import { getCardImage } from '@/services/getCardImage';
 import type { DeckCard } from '@/types';
 
 interface DeckCardItemProps {
@@ -18,7 +19,7 @@ export default function DeckCardItem({ deckCard, onRemove }: DeckCardItemProps) 
       <CardContent className="p-0">
         <div className="relative">
           <img
-            src={card.image_uris?.normal || '/placeholder.svg'}
+            src={getCardImage(card) || '/placeholder.svg'}
             alt={card.name}
             className="w-full h-auto rounded-t-lg"
             loading="lazy"

@@ -146,24 +146,13 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
 
   const addCardToDeck = async (deckId: string, card: Card, quantity = 1) => {
     try {
-      const deck = decks.find((d) => d.id === deckId);
-      if (!deck) return;
+      const updatedDeck = await decksService.addCardToDeck({ card, deckId });
 
-      const existingCardIndex = deck.cards.findIndex((dc) => dc.card.id === card.id);
-
-      if (existingCardIndex >= 0) {
-        // Update existing card quantity
-        deck.cards[existingCardIndex].quantity += quantity;
-      } else {
-        // Add new card
-        deck.cards.push({ card, quantity });
-      }
-
-      await updateDeck(deck);
+      setDecks((prevDecks) => prevDecks.map((deck) => (deck.id === deckId ? updatedDeck : deck)));
 
       toast({
         title: "Card added",
-        description: `${quantity}x ${card.name} added to ${deck.name}`,
+        description: `${quantity}x ${card.name} added to ${updatedDeck.name}`,
       });
     } catch (error) {
       toast({

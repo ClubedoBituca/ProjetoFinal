@@ -9,14 +9,14 @@ export interface User {
 export interface Card {
   id: string;
   name: string;
-  mana_cost: string;
+  mana_cost?: string | null;
   cmc: number;
   type_line: string;
-  oracle_text: string;
-  power?: string;
-  toughness?: string;
-  colors: string[];
-  color_identity: string[];
+  oracle_text?: string | null;
+  power?: string | null;
+  toughness?: string | null;
+  colors?: string[] | null;
+  color_identity?: string[] | null;
   set: string;
   set_name: string;
   collector_number: string;
@@ -27,24 +27,26 @@ export interface Card {
     normal: string;
     large: string;
     png: string;
-  };
+  } | null;
 
-  card_faces?: {
-    name: string;
-    mana_cost?: string;
-    type_line?: string;
-    oracle_text?: string;
-    image_uris?: {
-      small: string;
-      normal: string;
-      large: string;
-      png: string;
-    };
-  }[];
+  card_faces?:
+    | {
+        name: string;
+        mana_cost?: string | null;
+        type_line?: string | null;
+        oracle_text?: string | null;
+        image_uris?: {
+          small: string;
+          normal: string;
+          large: string;
+          png: string;
+        } | null;
+      }[]
+    | null;
 
   prices: {
-    usd?: string;
-    usd_foil?: string;
+    usd?: string | null;
+    usd_foil?: string | null;
   };
 }
 

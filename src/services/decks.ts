@@ -1,10 +1,15 @@
 import { API_URL } from "@/constants/api";
-import { Deck } from "@/types";
+import { Card, Deck } from "@/types";
 import { apiFetch } from "@/utils/apiFetch";
 
 interface CreateDeckParams {
   name: string;
   description?: string;
+}
+
+interface AddCardToDeckParams {
+  card: Card;
+  deckId: string;
 }
 
 export const decksService = {
@@ -46,5 +51,20 @@ export const decksService = {
       const erro = await res.json();
       throw new Error(erro.erro || "Erro ao deletar deck");
     }
+  },
+  addCardToDeck: async ({ card, deckId }: AddCardToDeckParams): Promise<Deck> => {
+    const res = await apiFetch(`${API_URL}/decks/${deckId}/cards`, {
+      method: "POST",
+      body: JSON.stringify(card),
+    });
+
+    if (!res.ok) {
+      const erro = await res.json();
+      throw new Error(erro.erro || "Erro ao adicionar carta ao deck");
+    }
+
+    const newDeck: Deck = await res.json();
+
+    return newDeck;
   },
 };
