@@ -108,7 +108,7 @@ export const deleteDeck = (req: Request, res: Response) => {
 };
 
 const addCardParamsSchema = z.object({
-  deckId: z.string(withRequired("ID")),
+  deckId: z.string(withRequired("Deck ID")),
 });
 
 const addCardBodySchema = z.object({
@@ -212,8 +212,8 @@ export const addCardToDeck = (req: Request, res: Response) => {
 
     fs.writeFileSync(dbPath, JSON.stringify(decks, null, 2), "utf-8");
 
-    res.status(200).json(decks[deckIdx]);
+    res.status(201).json(decks[deckIdx]);
   } catch (error) {
-    res.status(500).json({ erro: "Erro ao excluir deck." });
+    res.status(500).json({ erro: "Erro ao adicionar carta ao deck." });
   }
 };
