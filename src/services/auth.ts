@@ -1,3 +1,5 @@
+import { API_URL } from "@/constants/api";
+import { localStorageKeys } from "@/constants/localstorage";
 import { User } from "@/types";
 
 export interface LoginResponse {
@@ -9,8 +11,6 @@ export interface LoginResponse {
   };
   token?: string;
 }
-
-const API_URL = "http://localhost:3001";
 
 function validateToken(token: string): { userId: string; exp: number } | null {
   try {
@@ -41,8 +41,8 @@ export const authService = {
 
     const { usuario, token } = await res.json();
 
-    localStorage.setItem("mtg_app_token", token);
-    localStorage.setItem("mtg_app_user", JSON.stringify(usuario));
+    localStorage.setItem(localStorageKeys.token, token);
+    localStorage.setItem(localStorageKeys.user, JSON.stringify(usuario));
 
     return {
       user: {
@@ -69,8 +69,8 @@ export const authService = {
 
     const { usuario, token } = await res.json();
 
-    localStorage.setItem("mtg_app_token", token);
-    localStorage.setItem("mtg_app_user", JSON.stringify(usuario));
+    localStorage.setItem(localStorageKeys.token, token);
+    localStorage.setItem(localStorageKeys.user, JSON.stringify(usuario));
 
     return {
       user: {
@@ -84,20 +84,20 @@ export const authService = {
   },
 
   logout: async (): Promise<void> => {
-    localStorage.removeItem("mtg_app_token");
-    localStorage.removeItem("mtg_app_user");
+    localStorage.removeItem(localStorageKeys.token);
+    localStorage.removeItem(localStorageKeys.user);
   },
 
   getCurrentUser: (): { user: User; token: string } | null => {
-    const token = localStorage.getItem("mtg_app_token");
-    const userStr = localStorage.getItem("mtg_app_user");
+    const token = localStorage.getItem(localStorageKeys.token);
+    const userStr = localStorage.getItem(localStorageKeys.user);
 
     if (!token || !userStr) return null;
 
     const tokenData = validateToken(token);
     if (!tokenData) {
-      localStorage.removeItem("mtg_app_token");
-      localStorage.removeItem("mtg_app_user");
+      localStorage.removeItem(localStorageKeys.token);
+      localStorage.removeItem(localStorageKeys.user);
       return null;
     }
 

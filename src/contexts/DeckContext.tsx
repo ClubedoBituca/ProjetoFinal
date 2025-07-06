@@ -1,12 +1,12 @@
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { DeckContextType, Deck, Card } from '../types';
-import { useAuth } from './AuthContext';
-import { toast } from '../hooks/use-toast';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import type { DeckContextType, Deck, Card } from "../types";
+import { useAuth } from "./AuthContext";
+import { toast } from "../hooks/use-toast";
+import { decksService } from "@/services/decks";
 
 const DeckContext = createContext<DeckContextType | undefined>(undefined);
 
-const DECKS_STORAGE_KEY = 'mtg_app_decks';
+const DECKS_STORAGE_KEY = "mtg_app_decks";
 
 export function DeckProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
@@ -14,23 +14,18 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
   const [currentDeck, setCurrentDeck] = useState<Deck | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Load decks from localStorage
   useEffect(() => {
-    if (user) {
-      const storedDecks = localStorage.getItem(DECKS_STORAGE_KEY);
-      if (storedDecks) {
-        try {
-          const allDecks = JSON.parse(storedDecks);
-          const userDecks = allDecks.filter((deck: Deck) => deck.userId === user.id);
-          setDecks(userDecks);
-        } catch (error) {
-          console.error('Error loading decks:', error);
-        }
+    async function getUserDecks() {
+      if (user) {
+        const decks = await decksService.getUserDecks();
+        setDecks(decks);
+      } else {
+        setDecks([]);
+        setCurrentDeck(null);
       }
-    } else {
-      setDecks([]);
-      setCurrentDeck(null);
     }
+
+    getUserDecks();
   }, [user]);
 
   // Save decks to localStorage
@@ -38,14 +33,14 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
     try {
       const storedDecks = localStorage.getItem(DECKS_STORAGE_KEY);
       const allDecks = storedDecks ? JSON.parse(storedDecks) : [];
-      
+
       // Remove current user's decks and add updated ones
       const otherUserDecks = allDecks.filter((deck: Deck) => deck.userId !== user?.id);
       const updatedAllDecks = [...otherUserDecks, ...newDecks];
-      
+
       localStorage.setItem(DECKS_STORAGE_KEY, JSON.stringify(updatedAllDecks));
     } catch (error) {
-      console.error('Error saving decks:', error);
+      console.error("Error saving decks:", error);
     }
   };
 
@@ -61,20 +56,11 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
 
     try {
       setIsLoading(true);
-      
-      const newDeck: Deck = {
-        id: `deck_${Date.now()}`,
-        name,
-        description,
-        cards: [],
-        userId: user.id,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+
+      const newDeck = await decksService.createDeck({ name, description });
 
       const updatedDecks = [...decks, newDeck];
       setDecks(updatedDecks);
-      saveDecks(updatedDecks);
 
       toast({
         title: "Deck created",
@@ -94,16 +80,14 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
   const updateDeck = async (updatedDeck: Deck) => {
     try {
       setIsLoading(true);
-      
+
       updatedDeck.updatedAt = new Date().toISOString();
-      
-      const updatedDecks = decks.map(deck => 
-        deck.id === updatedDeck.id ? updatedDeck : deck
-      );
-      
+
+      const updatedDecks = decks.map((deck) => (deck.id === updatedDeck.id ? updatedDeck : deck));
+
       setDecks(updatedDecks);
       saveDecks(updatedDecks);
-      
+
       if (currentDeck?.id === updatedDeck.id) {
         setCurrentDeck(updatedDeck);
       }
@@ -126,13 +110,13 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
   const deleteDeck = async (id: string) => {
     try {
       setIsLoading(true);
-      
-      const deckToDelete = decks.find(deck => deck.id === id);
-      const updatedDecks = decks.filter(deck => deck.id !== id);
-      
-      setDecks(updatedDecks);
-      saveDecks(updatedDecks);
-      
+
+      await decksService.deleteDeck(id);
+
+      const deckToDelete = decks.find((deck) => deck.id === id);
+
+      setDecks((prevDecks) => prevDecks.filter((deck) => deck.id !== id));
+
       if (currentDeck?.id === id) {
         setCurrentDeck(null);
       }
@@ -154,11 +138,11 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
 
   const addCardToDeck = async (deckId: string, card: Card, quantity = 1) => {
     try {
-      const deck = decks.find(d => d.id === deckId);
+      const deck = decks.find((d) => d.id === deckId);
       if (!deck) return;
 
-      const existingCardIndex = deck.cards.findIndex(dc => dc.card.id === card.id);
-      
+      const existingCardIndex = deck.cards.findIndex((dc) => dc.card.id === card.id);
+
       if (existingCardIndex >= 0) {
         // Update existing card quantity
         deck.cards[existingCardIndex].quantity += quantity;
@@ -168,7 +152,7 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
       }
 
       await updateDeck(deck);
-      
+
       toast({
         title: "Card added",
         description: `${quantity}x ${card.name} added to ${deck.name}`,
@@ -184,14 +168,14 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
 
   const removeCardFromDeck = async (deckId: string, cardId: string) => {
     try {
-      const deck = decks.find(d => d.id === deckId);
+      const deck = decks.find((d) => d.id === deckId);
       if (!deck) return;
 
-      const cardToRemove = deck.cards.find(dc => dc.card.id === cardId);
-      deck.cards = deck.cards.filter(dc => dc.card.id !== cardId);
+      const cardToRemove = deck.cards.find((dc) => dc.card.id === cardId);
+      deck.cards = deck.cards.filter((dc) => dc.card.id !== cardId);
 
       await updateDeck(deck);
-      
+
       toast({
         title: "Card removed",
         description: `${cardToRemove?.card.name} removed from ${deck.name}`,
@@ -217,17 +201,13 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
     isLoading,
   };
 
-  return (
-    <DeckContext.Provider value={value}>
-      {children}
-    </DeckContext.Provider>
-  );
+  return <DeckContext.Provider value={value}>{children}</DeckContext.Provider>;
 }
 
 export function useDeck() {
   const context = useContext(DeckContext);
   if (context === undefined) {
-    throw new Error('useDeck must be used within a DeckProvider');
+    throw new Error("useDeck must be used within a DeckProvider");
   }
   return context;
 }
