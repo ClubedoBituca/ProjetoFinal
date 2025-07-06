@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
-import z from "zod";
+import { z } from "zod";
 
 import { User } from "../types";
 import { withRequired } from "../utils/validations";

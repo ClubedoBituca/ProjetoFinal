@@ -17,8 +17,16 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     async function getUserDecks() {
       if (user) {
-        const decks = await decksService.getUserDecks();
-        setDecks(decks);
+        setIsLoading(true);
+
+        try {
+          const decks = await decksService.getUserDecks();
+          setDecks(decks);
+        } catch (err) {
+          toast({ title: "Erro ao buscar decks do usuário", variant: "destructive" });
+        } finally {
+          setIsLoading(false);
+        }
       } else {
         setDecks([]);
         setCurrentDeck(null);
