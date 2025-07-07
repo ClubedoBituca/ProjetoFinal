@@ -210,6 +210,8 @@ export const addCardToDeck = (req: Request, res: Response) => {
       decks[deckIdx].cards.push({ card, quantity: 1 });
     }
 
+    decks[deckIdx].updatedAt = new Date().toISOString();
+
     fs.writeFileSync(dbPath, JSON.stringify(decks, null, 2), "utf-8");
 
     res.status(201).json(decks[deckIdx]);
@@ -256,6 +258,8 @@ export const removeCardFromDeck = (req: Request, res: Response) => {
       res.status(404).json({ erro: "Nenhuma carta encontrada com o ID fornecido." });
       return;
     }
+
+    deck.updatedAt = new Date().toISOString();
 
     fs.writeFileSync(dbPath, JSON.stringify(decks, null, 2), "utf-8");
     res.status(200).json(deck);
