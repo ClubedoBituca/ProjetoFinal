@@ -1,3 +1,7 @@
+import { API_URL } from "@/constants/api";
+import { localStorageKeys } from "@/constants/localstorage";
+import { User } from "@/types";
+
 export interface LoginResponse {
   user: {
     id: string;
@@ -8,28 +12,13 @@ export interface LoginResponse {
   token?: string;
 }
 
-const API_URL = "http://localhost:3001";
-
-// Generate mock JWT token
-function generateToken(userId: string): string {
-  const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-  const payload = btoa(
-    JSON.stringify({
-      userId,
-      exp: Date.now() + 24 * 60 * 60 * 1000, // 24h
-    })
-  );
-  const signature = btoa(`mock_signature_${userId}`);
-  return `${header}.${payload}.${signature}`;
-}
-
 function validateToken(token: string): { userId: string; exp: number } | null {
   try {
     const parts = token.split(".");
     if (parts.length !== 3) return null;
 
     const payload = JSON.parse(atob(parts[1]));
-    if (payload.exp < Date.now()) return null;
+    if (payload.exp * 1000 < Date.now()) return null;
 
     return { userId: payload.userId, exp: payload.exp };
   } catch {
@@ -38,7 +27,6 @@ function validateToken(token: string): { userId: string; exp: number } | null {
 }
 
 export const authService = {
-  // Login real via backend
   login: async (email: string, password: string): Promise<LoginResponse> => {
     const res = await fetch(`${API_URL}/session/login`, {
       method: "POST",
@@ -51,11 +39,10 @@ export const authService = {
       throw new Error(erro.erro || "Erro ao fazer login");
     }
 
-    const { usuario } = await res.json();
+    const { usuario, token } = await res.json();
 
-    const token = generateToken(usuario.id);
-    localStorage.setItem("mtg_app_token", token);
-    localStorage.setItem("mtg_app_user", JSON.stringify(usuario));
+    localStorage.setItem(localStorageKeys.token, token);
+    localStorage.setItem(localStorageKeys.user, JSON.stringify(usuario));
 
     return {
       user: {
@@ -68,7 +55,6 @@ export const authService = {
     };
   },
 
-  // Registro real via backend
   register: async (email: string, username: string, password: string): Promise<LoginResponse> => {
     const res = await fetch(`${API_URL}/usuarios`, {
       method: "POST",
@@ -81,38 +67,37 @@ export const authService = {
       throw new Error(erro.erro || "Erro ao registrar");
     }
 
-    const novoUsuario = await res.json();
+    const { usuario, token } = await res.json();
 
-    const token = generateToken(novoUsuario.id);
-    localStorage.setItem("mtg_app_token", token);
-    localStorage.setItem("mtg_app_user", JSON.stringify(novoUsuario));
+    localStorage.setItem(localStorageKeys.token, token);
+    localStorage.setItem(localStorageKeys.user, JSON.stringify(usuario));
 
     return {
       user: {
-        id: novoUsuario.id,
-        email: novoUsuario.email,
-        username: novoUsuario.username,
-        createdAt: novoUsuario.createdAt,
+        id: usuario.id,
+        email: usuario.email,
+        username: usuario.username,
+        createdAt: usuario.createdAt,
       },
       token,
     };
   },
 
   logout: async (): Promise<void> => {
-    localStorage.removeItem("mtg_app_token");
-    localStorage.removeItem("mtg_app_user");
+    localStorage.removeItem(localStorageKeys.token);
+    localStorage.removeItem(localStorageKeys.user);
   },
 
-  getCurrentUser: (): { user: any; token: string } | null => {
-    const token = localStorage.getItem("mtg_app_token");
-    const userStr = localStorage.getItem("mtg_app_user");
+  getCurrentUser: (): { user: User; token: string } | null => {
+    const token = localStorage.getItem(localStorageKeys.token);
+    const userStr = localStorage.getItem(localStorageKeys.user);
 
     if (!token || !userStr) return null;
 
     const tokenData = validateToken(token);
     if (!tokenData) {
-      localStorage.removeItem("mtg_app_token");
-      localStorage.removeItem("mtg_app_user");
+      localStorage.removeItem(localStorageKeys.token);
+      localStorage.removeItem(localStorageKeys.user);
       return null;
     }
 
@@ -122,13 +107,5 @@ export const authService = {
     } catch {
       return null;
     }
-  },
-
-  validateSession: (): boolean => {
-    const token = localStorage.getItem("mtg_app_token");
-    if (!token) return false;
-
-    const tokenData = validateToken(token);
-    return tokenData !== null;
   },
 };

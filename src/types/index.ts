@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   email: string;
@@ -88,7 +87,6 @@ export interface DeckContextType {
   decks: Deck[];
   currentDeck: Deck | null;
   createDeck: (name: string, description?: string) => Promise<void>;
-  updateDeck: (deck: Deck) => Promise<void>;
   deleteDeck: (id: string) => Promise<void>;
   addCardToDeck: (deckId: string, card: Card, quantity?: number) => Promise<void>;
   removeCardFromDeck: (deckId: string, cardId: string) => Promise<void>;

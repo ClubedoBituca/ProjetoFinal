@@ -1,13 +1,12 @@
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import fs from "fs";
-import jwt from "jsonwebtoken";
 import path from "path";
 import { z } from "zod";
 
-import authConfig from "../config/auth";
 import { User } from "../types";
 import { withRequired } from "../utils/validations";
+import { signToken } from "../services/authService";
 
 const dbPath = path.join(__dirname, "..", "db", "usuarios.json");
 
@@ -45,9 +44,7 @@ export const login = async (req: Request, res: Response) => {
       return;
     }
 
-    const token = jwt.sign({ userId: usuario.id }, authConfig.secret, {
-      expiresIn: authConfig.expiresIn,
-    });
+    const token = signToken(usuario.id);
 
     res.json({ mensagem: "Login bem-sucedido", usuario: { ...usuario, password: undefined }, token });
   } catch (error) {
