@@ -67,7 +67,7 @@ export default function Header() {
                   <DropdownMenuItem asChild>
                     <Link to="/dashboard" className="flex items-center space-x-2">
                       <Grid2x2 className="w-4 h-4" />
-                      <span>My Decks</span>
+                      <span>Meus Decks</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
@@ -76,7 +76,7 @@ export default function Header() {
                     className="flex items-center space-x-2 text-destructive focus:text-destructive"
                   >
                     <LogOut className="w-4 h-4" />
-                    <span>Logout</span>
+                    <span>Sair</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

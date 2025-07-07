@@ -28,13 +28,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(response.user);
       setToken(response.token);
       toast({
-        title: "Login successful",
-        description: `Welcome back, ${response.user.username}!`,
+        title: "Conectado",
+        description: `Bem vindo de volta, ${response.user.username}!`,
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Login failed';
+      const message = error instanceof Error ? error.message : 'Tente Novamente';
       toast({
-        title: "Login failed",
+        title: "Login Falhou!",
         description: message,
         variant: "destructive",
       });
@@ -51,13 +51,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(response.user);
       setToken(response.token);
       toast({
-        title: "Registration successful",
-        description: `Welcome to MTG Deck Builder, ${response.user.username}!`,
+        title: "Registrado com Sucesso!",
+        description: `Bem vindo ao MTG Deck Builder, ${response.user.username}!`,
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Registration failed';
+      const message = error instanceof Error ? error.message : 'O usuário não foi registrado';
       toast({
-        title: "Registration failed",
+        title: "Registro Falhou!",
         description: message,
         variant: "destructive",
       });
@@ -73,11 +73,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       setToken(null);
       toast({
-        title: "Logout successful",
-        description: "See you next time!",
+        title: "Desconectado",
+        description: "Até a próxima...",
       });
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('Erro ao sair:', error);
     }
   };
 

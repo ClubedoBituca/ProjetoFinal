@@ -58,25 +58,25 @@ export default function Register() {
           >
             MTG Deck Builder
           </Link>
-          <p className="text-muted-foreground mt-2">Join the ranks of Planeswalkers</p>
+          <p className="text-muted-foreground mt-2">Junte-se às fileiras dos Planeswalkers</p>
         </div>
 
         {/* Registration Form */}
         <Card>
           <CardHeader>
-            <CardTitle>Create Account</CardTitle>
+            <CardTitle>Nova Conta</CardTitle>
             <CardDescription>
-              Start building your Magic collection today
+              Comece a construir sua coleção de Magic hoje mesmo!
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">Email:</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="your@email.com"
+                  placeholder="seuemail@email.com"
                   {...register('email')}
                   disabled={isLoading}
                 />
@@ -86,11 +86,11 @@ export default function Register() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
+                <Label htmlFor="username">Usuário:</Label>
                 <Input
                   id="username"
                   type="text"
-                  placeholder="Choose a username"
+                  placeholder="Como você quer ser chamado?"
                   {...register('username')}
                   disabled={isLoading}
                 />
@@ -100,11 +100,11 @@ export default function Register() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Senha:</Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Create a password"
+                  placeholder="Criar senha"
                   {...register('password')}
                   disabled={isLoading}
                 />
@@ -114,11 +114,11 @@ export default function Register() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirmPassword">Confirme sua senha:</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
-                  placeholder="Confirm your password"
+                  placeholder="Confirme a senha escolhida"
                   {...register('confirmPassword')}
                   disabled={isLoading}
                 />
@@ -132,18 +132,18 @@ export default function Register() {
                 className="w-full" 
                 disabled={isLoading}
               >
-                {isLoading ? 'Creating Account...' : 'Create Account'}
+                {isLoading ? 'Criando conta...' : 'Registrar'}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
-                Already have an account?{' '}
+                Já tem uma conta?{' '}
                 <Link 
                   to="/login" 
                   className="text-primary hover:underline font-medium"
                 >
-                  Sign in
+                  Entrar
                 </Link>
               </p>
             </div>

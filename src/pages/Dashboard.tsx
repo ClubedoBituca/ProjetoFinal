@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { ConfirmDeleteDialog } from '@/utils/ConfirmDelete';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -33,11 +34,6 @@ export default function Dashboard() {
     }
   };
 
-  const handleDeleteDeck = async (deckId: string) => {
-    if (window.confirm('Tem certeza que deseja apagar esse deck?')) {
-      await deleteDeck(deckId);
-    }
-  };
 
   const getTotalCards = (deck: any) => {
     return deck.cards.reduce((total: number, deckCard: any) => total + deckCard.quantity, 0);
@@ -200,14 +196,19 @@ export default function Dashboard() {
                         </p>
                       )}
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteDeck(deck.id)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
+                    <ConfirmDeleteDialog
+                      onConfirm={() => deleteDeck(deck.id)}
+                      title="Apagar Deck"
+                      description="Tem certeza que deseja apagar esse deck? Esta ação não poderá ser desfeita."
                     >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </ConfirmDeleteDialog>
                   </div>
                 </CardHeader>
                 <CardContent>
