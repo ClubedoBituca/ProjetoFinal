@@ -1,76 +1,74 @@
-import { Request, Response } from 'express';
-import fs from 'fs';
-import path from 'path';
+import bcrypt from "bcrypt";
+import { Request, Response } from "express";
+import fs from "fs";
+import path from "path";
+import { z } from "zod";
 
+import { User } from "../types";
+import { withRequired } from "../utils/validations";
+import { signToken } from "../services/authService";
 
+const dbPath = path.join(__dirname, "..", "db", "usuarios.json");
 
-const dbPath = path.join(__dirname, '..', 'db', 'usuarios.json');
-
-export const listarUsuarios = (req: Request, res: Response): Response => {
+export const listarUsuarios = (_req: Request, res: Response) => {
   try {
-    const data = fs.readFileSync(dbPath, 'utf-8');
-    const usuarios = JSON.parse(data);
-    return res.json(usuarios);
+    const data = fs.readFileSync(dbPath, "utf-8");
+    const usuarios = JSON.parse(data).map((usuario: User) => ({ ...usuario, password: undefined }));
+    res.json(usuarios);
   } catch (error) {
-    return res.status(500).json({ erro: 'Erro ao ler os usuários.' });
+    res.status(500).json({ erro: "Erro ao ler os usuários." });
   }
 };
 
-export const cadastrarUsuario = (req: Request, res: Response): Response => {
+const registerSchema = z.object({
+  email: z.string(withRequired("Email")).email("Email inválido"),
+  username: z.string(withRequired("Username")).min(3, "O username deve ter pelo menos 3 caracteres"),
+  password: z.string(withRequired("Senha")).min(6, "A senha deve ter pelo menos 6 caracteres"),
+});
+
+export const cadastrarUsuario = async (req: Request, res: Response) => {
   const { email, username, password } = req.body;
 
-  if (!email || !username || !password) {
-    return res.status(400).json({ erro: 'Username, email e senha são obrigatórios.' });
+  const result = registerSchema.safeParse({ email, username, password });
+
+  if (!result.success) {
+    let errorMsg = "";
+
+    result.error.issues.forEach((issue) => {
+      errorMsg += issue.message + ". ";
+    });
+
+    res.status(400).json({ erro: errorMsg.trim() });
+    return;
   }
 
   try {
-    const data = fs.readFileSync(dbPath, 'utf-8');
-    const usuarios = JSON.parse(data);
+    const data = fs.readFileSync(dbPath, "utf-8");
+    const usuarios: User[] = JSON.parse(data);
 
-    const emailJaExiste = usuarios.find((u: any) => u.email === email);
+    const emailJaExiste = usuarios.find((u) => u.email === email);
     if (emailJaExiste) {
-      return res.status(409).json({ erro: 'Email já cadastrado.' });
+      res.status(400).json({ erro: "Email já cadastrado." });
+      return;
     }
+
+    const passwordHash = await bcrypt.hash(password, 10);
 
     const novoUsuario = {
       id: `user_${Date.now()}`,
       email,
       username,
-      password,
-      createdAt: new Date().toISOString()
+      password: passwordHash,
+      createdAt: new Date().toISOString(),
     };
 
     usuarios.push(novoUsuario);
-    fs.writeFileSync(dbPath, JSON.stringify(usuarios, null, 2), 'utf-8');
+    fs.writeFileSync(dbPath, JSON.stringify(usuarios, null, 2), "utf-8");
 
-    return res.status(201).json(novoUsuario);
+    const token = signToken(novoUsuario.id);
+
+    res.status(201).json({ usuario: { ...novoUsuario, password: undefined }, token });
   } catch (error) {
-    return res.status(500).json({ erro: 'Erro ao cadastrar o usuário.' });
+    res.status(500).json({ erro: "Erro ao cadastrar o usuário." });
   }
 };
-
-export const loginUsuario = (req: Request, res: Response): Response => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ erro: 'Email e senha são obrigatórios.' });
-  }
-
-  try {
-    const data = fs.readFileSync(dbPath, 'utf-8');
-    const usuarios = JSON.parse(data);
-
-    const usuario = usuarios.find(
-      (u: any) => u.email === email && u.password === password
-    );
-
-    if (!usuario) {
-      return res.status(401).json({ erro: 'Credenciais inválidas.' });
-    }
-
-    return res.json({ mensagem: 'Login bem-sucedido', usuario });
-  } catch (error) {
-    return res.status(500).json({ erro: 'Erro ao processar o login.' });
-  }
-};
-

@@ -1,10 +1,11 @@
-import { Router } from 'express';
-import { listarUsuarios, cadastrarUsuario, loginUsuario } from '../controllers/userController';
+import { Router } from "express";
+
+import { listarUsuarios, cadastrarUsuario } from "../controllers/userController";
+import authMiddleware from "../middlewares/auth";
 
 const router = Router();
 
-router.get('/', listarUsuarios);
-router.post('/', cadastrarUsuario);
-router.post('/login', loginUsuario); // ✅ agora o login funciona
+router.get("/", authMiddleware, listarUsuarios);
+router.post("/", cadastrarUsuario);
 
 export default router;

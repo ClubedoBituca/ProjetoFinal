@@ -1,12 +1,10 @@
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { DeckContextType, Deck, Card } from '../types';
-import { useAuth } from './AuthContext';
-import { toast } from '../hooks/use-toast';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import type { DeckContextType, Deck, Card } from "../types";
+import { useAuth } from "./AuthContext";
+import { toast } from "../hooks/use-toast";
+import { decksService } from "@/services/decks";
 
 const DeckContext = createContext<DeckContextType | undefined>(undefined);
-
-const DECKS_STORAGE_KEY = 'mtg_app_decks';
 
 export function DeckProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
@@ -14,40 +12,27 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
   const [currentDeck, setCurrentDeck] = useState<Deck | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Load decks from localStorage
   useEffect(() => {
-    if (user) {
-      const storedDecks = localStorage.getItem(DECKS_STORAGE_KEY);
-      if (storedDecks) {
-        try {
-          const allDecks = JSON.parse(storedDecks);
-          const userDecks = allDecks.filter((deck: Deck) => deck.userId === user.id);
-          setDecks(userDecks);
-        } catch (error) {
-          console.error('Error loading decks:', error);
-        }
-      }
-    } else {
-      setDecks([]);
-      setCurrentDeck(null);
-    }
-  }, [user]);
+    async function getUserDecks() {
+      if (user) {
+        setIsLoading(true);
 
-  // Save decks to localStorage
-  const saveDecks = (newDecks: Deck[]) => {
-    try {
-      const storedDecks = localStorage.getItem(DECKS_STORAGE_KEY);
-      const allDecks = storedDecks ? JSON.parse(storedDecks) : [];
-      
-      // Remove current user's decks and add updated ones
-      const otherUserDecks = allDecks.filter((deck: Deck) => deck.userId !== user?.id);
-      const updatedAllDecks = [...otherUserDecks, ...newDecks];
-      
-      localStorage.setItem(DECKS_STORAGE_KEY, JSON.stringify(updatedAllDecks));
-    } catch (error) {
-      console.error('Error saving decks:', error);
+        try {
+          const decks = await decksService.getUserDecks();
+          setDecks(decks);
+        } catch (err) {
+          toast({ title: "Erro ao buscar decks do usuário", variant: "destructive" });
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setDecks([]);
+        setCurrentDeck(null);
+      }
     }
-  };
+
+    getUserDecks();
+  }, [user]);
 
   const createDeck = async (name: string, description?: string) => {
     if (!user) {
@@ -61,20 +46,11 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
 
     try {
       setIsLoading(true);
-      
-      const newDeck: Deck = {
-        id: `deck_${Date.now()}`,
-        name,
-        description,
-        cards: [],
-        userId: user.id,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
+
+      const newDeck = await decksService.createDeck({ name, description });
 
       const updatedDecks = [...decks, newDeck];
       setDecks(updatedDecks);
-      saveDecks(updatedDecks);
 
       toast({
         title: "Deck created",
@@ -91,48 +67,16 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const updateDeck = async (updatedDeck: Deck) => {
-    try {
-      setIsLoading(true);
-      
-      updatedDeck.updatedAt = new Date().toISOString();
-      
-      const updatedDecks = decks.map(deck => 
-        deck.id === updatedDeck.id ? updatedDeck : deck
-      );
-      
-      setDecks(updatedDecks);
-      saveDecks(updatedDecks);
-      
-      if (currentDeck?.id === updatedDeck.id) {
-        setCurrentDeck(updatedDeck);
-      }
-
-      toast({
-        title: "Deck updated",
-        description: `"${updatedDeck.name}" has been updated`,
-      });
-    } catch (error) {
-      toast({
-        title: "Error updating deck",
-        description: "Please try again",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const deleteDeck = async (id: string) => {
     try {
       setIsLoading(true);
-      
-      const deckToDelete = decks.find(deck => deck.id === id);
-      const updatedDecks = decks.filter(deck => deck.id !== id);
-      
-      setDecks(updatedDecks);
-      saveDecks(updatedDecks);
-      
+
+      await decksService.deleteDeck(id);
+
+      const deckToDelete = decks.find((deck) => deck.id === id);
+
+      setDecks((prevDecks) => prevDecks.filter((deck) => deck.id !== id));
+
       if (currentDeck?.id === id) {
         setCurrentDeck(null);
       }
@@ -154,24 +98,15 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
 
   const addCardToDeck = async (deckId: string, card: Card, quantity = 1) => {
     try {
-      const deck = decks.find(d => d.id === deckId);
-      if (!deck) return;
+      setIsLoading(true);
 
-      const existingCardIndex = deck.cards.findIndex(dc => dc.card.id === card.id);
-      
-      if (existingCardIndex >= 0) {
-        // Update existing card quantity
-        deck.cards[existingCardIndex].quantity += quantity;
-      } else {
-        // Add new card
-        deck.cards.push({ card, quantity });
-      }
+      const updatedDeck = await decksService.addCardToDeck({ card, deckId });
 
-      await updateDeck(deck);
-      
+      setDecks((prevDecks) => prevDecks.map((deck) => (deck.id === deckId ? updatedDeck : deck)));
+
       toast({
         title: "Card added",
-        description: `${quantity}x ${card.name} added to ${deck.name}`,
+        description: `${quantity}x ${card.name} added to ${updatedDeck.name}`,
       });
     } catch (error) {
       toast({
@@ -179,22 +114,26 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
         description: "Please try again",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const removeCardFromDeck = async (deckId: string, cardId: string) => {
     try {
-      const deck = decks.find(d => d.id === deckId);
-      if (!deck) return;
+      setIsLoading(true);
 
-      const cardToRemove = deck.cards.find(dc => dc.card.id === cardId);
-      deck.cards = deck.cards.filter(dc => dc.card.id !== cardId);
+      const updatedDeck = await decksService.removeCardFromDeck({ cardId, deckId });
 
-      await updateDeck(deck);
-      
+      const cardToRemove = decks
+        .find((deck) => deck.id === deckId)
+        .cards.find((deckCard) => deckCard.card.id === cardId);
+
+      setDecks((prevDecks) => prevDecks.map((deck) => (deck.id === deckId ? updatedDeck : deck)));
+
       toast({
         title: "Card removed",
-        description: `${cardToRemove?.card.name} removed from ${deck.name}`,
+        description: `${cardToRemove?.card.name} removed from ${updatedDeck.name}`,
       });
     } catch (error) {
       toast({
@@ -202,6 +141,8 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
         description: "Please try again",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -209,7 +150,6 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
     decks,
     currentDeck,
     createDeck,
-    updateDeck,
     deleteDeck,
     addCardToDeck,
     removeCardFromDeck,
@@ -217,17 +157,13 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
     isLoading,
   };
 
-  return (
-    <DeckContext.Provider value={value}>
-      {children}
-    </DeckContext.Provider>
-  );
+  return <DeckContext.Provider value={value}>{children}</DeckContext.Provider>;
 }
 
 export function useDeck() {
   const context = useContext(DeckContext);
   if (context === undefined) {
-    throw new Error('useDeck must be used within a DeckProvider');
+    throw new Error("useDeck must be used within a DeckProvider");
   }
   return context;
 }
