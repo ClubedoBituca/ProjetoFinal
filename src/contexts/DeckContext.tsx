@@ -6,8 +6,6 @@ import { decksService } from "@/services/decks";
 
 const DeckContext = createContext<DeckContextType | undefined>(undefined);
 
-const DECKS_STORAGE_KEY = "mtg_app_decks";
-
 export function DeckProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const [decks, setDecks] = useState<Deck[]>([]);
@@ -36,22 +34,6 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
     getUserDecks();
   }, [user]);
 
-  // Save decks to localStorage
-  const saveDecks = (newDecks: Deck[]) => {
-    try {
-      const storedDecks = localStorage.getItem(DECKS_STORAGE_KEY);
-      const allDecks = storedDecks ? JSON.parse(storedDecks) : [];
-
-      // Remove current user's decks and add updated ones
-      const otherUserDecks = allDecks.filter((deck: Deck) => deck.userId !== user?.id);
-      const updatedAllDecks = [...otherUserDecks, ...newDecks];
-
-      localStorage.setItem(DECKS_STORAGE_KEY, JSON.stringify(updatedAllDecks));
-    } catch (error) {
-      console.error("Error saving decks:", error);
-    }
-  };
-
   const createDeck = async (name: string, description?: string) => {
     if (!user) {
       toast({
@@ -77,36 +59,6 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       toast({
         title: "Error creating deck",
-        description: "Please try again",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const updateDeck = async (updatedDeck: Deck) => {
-    try {
-      setIsLoading(true);
-
-      updatedDeck.updatedAt = new Date().toISOString();
-
-      const updatedDecks = decks.map((deck) => (deck.id === updatedDeck.id ? updatedDeck : deck));
-
-      setDecks(updatedDecks);
-      saveDecks(updatedDecks);
-
-      if (currentDeck?.id === updatedDeck.id) {
-        setCurrentDeck(updatedDeck);
-      }
-
-      toast({
-        title: "Deck updated",
-        description: `"${updatedDeck.name}" has been updated`,
-      });
-    } catch (error) {
-      toast({
-        title: "Error updating deck",
         description: "Please try again",
         variant: "destructive",
       });
@@ -146,6 +98,8 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
 
   const addCardToDeck = async (deckId: string, card: Card, quantity = 1) => {
     try {
+      setIsLoading(true);
+
       const updatedDeck = await decksService.addCardToDeck({ card, deckId });
 
       setDecks((prevDecks) => prevDecks.map((deck) => (deck.id === deckId ? updatedDeck : deck)));
@@ -160,22 +114,26 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
         description: "Please try again",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const removeCardFromDeck = async (deckId: string, cardId: string) => {
     try {
-      const deck = decks.find((d) => d.id === deckId);
-      if (!deck) return;
+      setIsLoading(true);
 
-      const cardToRemove = deck.cards.find((dc) => dc.card.id === cardId);
-      deck.cards = deck.cards.filter((dc) => dc.card.id !== cardId);
+      const updatedDeck = await decksService.removeCardFromDeck({ cardId, deckId });
 
-      await updateDeck(deck);
+      const cardToRemove = decks
+        .find((deck) => deck.id === deckId)
+        .cards.find((deckCard) => deckCard.card.id === cardId);
+
+      setDecks((prevDecks) => prevDecks.map((deck) => (deck.id === deckId ? updatedDeck : deck)));
 
       toast({
         title: "Card removed",
-        description: `${cardToRemove?.card.name} removed from ${deck.name}`,
+        description: `${cardToRemove?.card.name} removed from ${updatedDeck.name}`,
       });
     } catch (error) {
       toast({
@@ -183,6 +141,8 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
         description: "Please try again",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -190,7 +150,6 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
     decks,
     currentDeck,
     createDeck,
-    updateDeck,
     deleteDeck,
     addCardToDeck,
     removeCardFromDeck,

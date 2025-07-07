@@ -217,3 +217,49 @@ export const addCardToDeck = (req: Request, res: Response) => {
     res.status(500).json({ erro: "Erro ao adicionar carta ao deck." });
   }
 };
+
+const removeCardParamsSchema = z.object({
+  deckId: z.string(withRequired("Deck ID")),
+  cardId: z.string(withRequired("Card ID")),
+});
+
+export const removeCardFromDeck = (req: Request, res: Response) => {
+  const { deckId, cardId } = req.params;
+
+  const paramsValidation = removeCardParamsSchema.safeParse({ deckId, cardId });
+
+  if (!paramsValidation.success) {
+    let errorMsg = "";
+
+    paramsValidation.error.issues.forEach((issue) => {
+      errorMsg += issue.message + ". ";
+    });
+
+    res.status(400).json({ erro: errorMsg.trim() });
+    return;
+  }
+
+  try {
+    const data = fs.readFileSync(dbPath, "utf-8");
+    const decks: Deck[] = JSON.parse(data);
+
+    const deck = decks.find((d) => d.id === deckId);
+    if (!deck) {
+      res.status(404).json({ erro: "Nenhum deck encontrado com o ID fornecido." });
+      return;
+    }
+
+    const prevLength = deck.cards.length;
+    deck.cards = deck.cards.filter((deckCard) => deckCard.card.id !== cardId);
+
+    if (deck.cards.length === prevLength) {
+      res.status(404).json({ erro: "Nenhuma carta encontrada com o ID fornecido." });
+      return;
+    }
+
+    fs.writeFileSync(dbPath, JSON.stringify(decks, null, 2), "utf-8");
+    res.status(200).json(deck);
+  } catch (error) {
+    res.status(500).json({ erro: "Erro ao remover carta do deck." });
+  }
+};

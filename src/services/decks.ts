@@ -12,6 +12,11 @@ interface AddCardToDeckParams {
   deckId: string;
 }
 
+interface RemoveCardFromDeckParams {
+  cardId: string;
+  deckId: string;
+}
+
 export const decksService = {
   getUserDecks: async (): Promise<Deck[]> => {
     const res = await apiFetch(`${API_URL}/decks`, {
@@ -61,6 +66,20 @@ export const decksService = {
     if (!res.ok) {
       const erro = await res.json();
       throw new Error(erro.erro || "Erro ao adicionar carta ao deck");
+    }
+
+    const newDeck: Deck = await res.json();
+
+    return newDeck;
+  },
+  removeCardFromDeck: async ({ cardId, deckId }: RemoveCardFromDeckParams): Promise<Deck> => {
+    const res = await apiFetch(`${API_URL}/decks/${deckId}/cards/${cardId}`, {
+      method: "DELETE",
+    });
+
+    if (!res.ok) {
+      const erro = await res.json();
+      throw new Error(erro.erro || "Erro ao remover carta do deck");
     }
 
     const newDeck: Deck = await res.json();
