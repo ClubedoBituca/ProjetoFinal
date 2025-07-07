@@ -7,7 +7,7 @@ export default async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    res.status(401).json({ error: "Token não fornecido" });
+    res.status(401).json({ erro: "Token não fornecido" });
     return;
   }
 
@@ -15,10 +15,10 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const payload = jwt.verify(token, authConfig.secret) as JwtPayload;
-    req.userId = payload;
+    req.userId = payload.sub;
 
     next();
   } catch {
-    res.status(401).json({ error: "Token inválido ou expirado" });
+    res.status(401).json({ erro: "Token inválido ou expirado" });
   }
 };
