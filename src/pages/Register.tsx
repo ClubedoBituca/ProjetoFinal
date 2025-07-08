@@ -1,24 +1,25 @@
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "../contexts/AuthContext";
 
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '../contexts/AuthContext';
-
-const registerSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  username: z.string().min(3, 'Username must be at least 3 characters'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+const registerSchema = z
+  .object({
+    email: z.string().email("Email inválido"),
+    username: z.string().min(3, "O username deve ter pelo menos 3 caracteres"),
+    password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "As senhas não correspondem",
+    path: ["confirmPassword"],
+  });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
@@ -39,7 +40,7 @@ export default function Register() {
     try {
       setIsLoading(true);
       await registerUser(data.email, data.username, data.password);
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (error) {
       // Error is handled in the auth context
     } finally {
@@ -52,22 +53,17 @@ export default function Register() {
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center">
-          <Link 
-            to="/" 
-            className="text-3xl font-bold bg-magic-gradient bg-clip-text text-transparent"
-          >
+          <Link to="/" className="text-3xl font-bold bg-magic-gradient bg-clip-text text-transparent">
             MTG Deck Builder
           </Link>
-          <p className="text-muted-foreground mt-2">Join the ranks of Planeswalkers</p>
+          <p className="text-muted-foreground mt-2">Junte-se aos Planeswalkers</p>
         </div>
 
         {/* Registration Form */}
         <Card>
           <CardHeader>
-            <CardTitle>Create Account</CardTitle>
-            <CardDescription>
-              Start building your Magic collection today
-            </CardDescription>
+            <CardTitle>Criar conta</CardTitle>
+            <CardDescription>Comece a construir sua coleção de Magic hoje mesmo</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -76,13 +72,11 @@ export default function Register() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="your@email.com"
-                  {...register('email')}
+                  placeholder="seu@email.com"
+                  {...register("email")}
                   disabled={isLoading}
                 />
-                {errors.email && (
-                  <p className="text-sm text-destructive">{errors.email.message}</p>
-                )}
+                {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
               </div>
 
               <div className="space-y-2">
@@ -90,60 +84,47 @@ export default function Register() {
                 <Input
                   id="username"
                   type="text"
-                  placeholder="Choose a username"
-                  {...register('username')}
+                  placeholder="Escolha um username"
+                  {...register("username")}
                   disabled={isLoading}
                 />
-                {errors.username && (
-                  <p className="text-sm text-destructive">{errors.username.message}</p>
-                )}
+                {errors.username && <p className="text-sm text-destructive">{errors.username.message}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Senha</Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Create a password"
-                  {...register('password')}
+                  placeholder="Crie uma senha"
+                  {...register("password")}
                   disabled={isLoading}
                 />
-                {errors.password && (
-                  <p className="text-sm text-destructive">{errors.password.message}</p>
-                )}
+                {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                <Label htmlFor="confirmPassword">Confirme sua senha</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
-                  placeholder="Confirm your password"
-                  {...register('confirmPassword')}
+                  placeholder="Confirme sua senha"
+                  {...register("confirmPassword")}
                   disabled={isLoading}
                 />
-                {errors.confirmPassword && (
-                  <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
-                )}
+                {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={isLoading}
-              >
-                {isLoading ? 'Creating Account...' : 'Create Account'}
+              <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading ? "Criando conta..." : "Criar conta"}
               </Button>
             </form>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
-                Already have an account?{' '}
-                <Link 
-                  to="/login" 
-                  className="text-primary hover:underline font-medium"
-                >
-                  Sign in
+                Já tem conta?{" "}
+                <Link to="/login" className="text-primary hover:underline font-medium">
+                  Entrar
                 </Link>
               </p>
             </div>

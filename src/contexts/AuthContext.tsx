@@ -1,8 +1,7 @@
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { AuthContextType, User } from '../types';
-import { authService } from '../services/auth';
-import { toast } from '../hooks/use-toast';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import type { AuthContextType, User } from "../types";
+import { authService } from "../services/auth";
+import { toast } from "../hooks/use-toast";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -28,13 +27,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(response.user);
       setToken(response.token);
       toast({
-        title: "Login successful",
-        description: `Welcome back, ${response.user.username}!`,
+        title: "Login bem-sucedido",
+        description: `Bem vindo(a) de volta, ${response.user.username}!`,
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Login failed';
+      const message = error instanceof Error ? error.message : "Falha ao realizar login";
       toast({
-        title: "Login failed",
+        title: "Falha ao realizar login",
         description: message,
         variant: "destructive",
       });
@@ -51,13 +50,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(response.user);
       setToken(response.token);
       toast({
-        title: "Registration successful",
-        description: `Welcome to MTG Deck Builder, ${response.user.username}!`,
+        title: "Cadastro bem-sucedido",
+        description: `Bem vindo(a) ao MTG Deck Builder, ${response.user.username}!`,
       });
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Registration failed';
+      const message = error instanceof Error ? error.message : "Falha ao realizar cadastro";
       toast({
-        title: "Registration failed",
+        title: "Falha ao realizar cadastro",
         description: message,
         variant: "destructive",
       });
@@ -73,11 +72,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       setToken(null);
       toast({
-        title: "Logout successful",
-        description: "See you next time!",
+        title: "Logout bem-sucedido",
+        description: "Até a próxima!",
       });
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     }
   };
 
@@ -90,17 +89,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }
