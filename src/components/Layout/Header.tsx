@@ -69,7 +69,7 @@ export default function Header() {
                   <DropdownMenuItem asChild>
                     <Link to={PATHS.DASHBOARD} className="flex items-center space-x-2">
                       <Grid2x2 className="w-4 h-4" />
-                      <span>My Decks</span>
+                      <span>Meus Decks</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

@@ -330,7 +330,7 @@ const Index = () => {
                           <SelectContent className="bg-popover">
                             {decks.map((deck) => (
                               <SelectItem key={deck.id} value={deck.id}>
-                                {deck.name} ({deck.cards.length} cards)
+                                {deck.name} ({deck.cards.length} carta{deck.cards.length === 1 ? '' : 's'})
                               </SelectItem>
                             ))}
                           </SelectContent>
