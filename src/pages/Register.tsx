@@ -1,12 +1,15 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { PATHS } from "@/routes/paths";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { useAuth } from "../contexts/AuthContext";
 
 const registerSchema = z
@@ -40,7 +43,7 @@ export default function Register() {
     try {
       setIsLoading(true);
       await registerUser(data.email, data.username, data.password);
-      navigate("/dashboard");
+      navigate(PATHS.DASHBOARD);
     } catch (error) {
       // Error is handled in the auth context
     } finally {
@@ -53,7 +56,7 @@ export default function Register() {
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center">
-          <Link to="/" className="text-3xl font-bold bg-magic-gradient bg-clip-text text-transparent">
+          <Link to={PATHS.HOME} className="text-3xl font-bold bg-magic-gradient bg-clip-text text-transparent">
             MTG Deck Builder
           </Link>
           <p className="text-muted-foreground mt-2">Junte-se aos Planeswalkers</p>
@@ -123,7 +126,7 @@ export default function Register() {
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
                 Já tem conta?{" "}
-                <Link to="/login" className="text-primary hover:underline font-medium">
+                <Link to={PATHS.LOGIN} className="text-primary hover:underline font-medium">
                   Entrar
                 </Link>
               </p>

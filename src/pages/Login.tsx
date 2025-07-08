@@ -1,15 +1,18 @@
 
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card';
-import { useAuth } from '../contexts/AuthContext';
-import { toast } from '../hooks/use-toast';
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { PATHS } from "@/routes/paths";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { useAuth } from "../contexts/AuthContext";
+import { toast } from "../hooks/use-toast";
 
 const loginSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -36,7 +39,7 @@ export default function Login() {
     try {
       setIsLoading(true);
       await login(data.email, data.password);
-      navigate('/dashboard');
+      navigate(PATHS.DASHBOARD);
     } catch (error) {
       toast({
         title: 'Falha de Acesso!',
@@ -54,7 +57,7 @@ export default function Login() {
         {/* Header */}
         <div className="text-center">
           <Link 
-            to="/" 
+            to={PATHS.HOME} 
             className="text-3xl font-bold bg-magic-gradient bg-clip-text text-transparent"
           >
             MTG Deck Builder
@@ -112,7 +115,7 @@ export default function Login() {
               <p className="text-sm text-muted-foreground">
                 Não tem uma conta?{' '}
                 <Link 
-                  to="/register" 
+                  to={PATHS.REGISTER} 
                   className="text-primary hover:underline font-medium"
                 >
                   Criar conta 

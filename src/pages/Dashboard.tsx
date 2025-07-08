@@ -1,16 +1,19 @@
+import { FileText, Grid2x2, Plus, Trash2 } from "lucide-react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import Header from '../components/Layout/Header';
-import { useAuth } from '../contexts/AuthContext';
-import { useDeck } from '../contexts/DeckContext';
-import { Plus, Grid2x2, FileText, Trash2 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { PATHS } from "@/routes/paths";
+import { Deck, DeckCard } from "@/types";
+
+import Header from "../components/Layout/Header";
+import { useAuth } from "../contexts/AuthContext";
+import { useDeck } from "../contexts/DeckContext";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -39,8 +42,8 @@ export default function Dashboard() {
     }
   };
 
-  const getTotalCards = (deck: any) => {
-    return deck.cards.reduce((total: number, deckCard: any) => total + deckCard.quantity, 0);
+  const getTotalCards = (deck: Deck) => {
+    return deck.cards.reduce((total: number, deckCard: DeckCard) => total + deckCard.quantity, 0);
   };
 
   if (!user) {
@@ -51,7 +54,7 @@ export default function Dashboard() {
           <h1 className="text-2xl font-bold mb-4">Acesso Negado!</h1>
           <p className="text-muted-foreground mb-6">Entre para contruir seus decks!</p>
           <Button asChild>
-            <Link to="/login">Entrar</Link>
+            <Link to={PATHS.LOGIN}>Entrar</Link>
           </Button>
         </div>
       </div>
@@ -234,7 +237,7 @@ export default function Dashboard() {
                         asChild 
                         className="w-full"
                       >
-                        <Link to={`/deck/${deck.id}`}>
+                        <Link to={PATHS.DECK_DETAILS(deck.id)}>
                           Editar Deck
                         </Link>
                       </Button>

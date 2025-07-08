@@ -1,6 +1,8 @@
-import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
+
 import { Button } from "@/components/ui/button";
+import { PATHS } from "@/routes/paths";
 
 const NotFound = () => {
   const location = useLocation();
@@ -26,7 +28,7 @@ const NotFound = () => {
       </p>
 
       <Button asChild>
-        <a href="/">Voltar para o Início</a>
+        <a href={PATHS.HOME}>Voltar para o Início</a>
       </Button>
     </div>
   );
