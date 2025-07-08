@@ -26,5 +26,12 @@
     "username": "NovaConta",
     "password": "$2b$10$KrbGSjGFA6fgWuX9VI/7cOTbfqewaphvAxQAv2kzpv5PfT3.7/WeW",
     "createdAt": "2025-06-25T20:51:25.082Z"
+  },
+  {
+    "id": "user_1751903620456",
+    "email": "lucassaliens@hotmail.com",
+    "username": "Lucas",
+    "password": "$2b$10$c55Aj4e2AUnG4bHYKavpj.1m9f3b69/JCz6fwYrrwIqib7/sGFHXO",
+    "createdAt": "2025-07-07T15:53:40.457Z"
   }
 ]
