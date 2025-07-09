@@ -79,8 +79,8 @@ const Index = () => {
     } catch (error) {
       console.error('Search error:', error);
       toast({
-        title: "Search failed",
-        description: "Please try again with different filters",
+        title: "Falha na pesquisa",
+        description: "Por favor, tente novamente com filtros diferentes",
         variant: "destructive",
       });
     } finally {
@@ -214,7 +214,7 @@ const Index = () => {
               variant="outline"
               size="lg"
             >
-              {isLoading ? 'Loading...' : 'Load More Cards'}
+              {isLoading ? 'Carregando...' : 'Carregar mais cartas'}
             </Button>
           </div>
         )}
@@ -330,7 +330,7 @@ const Index = () => {
                           <SelectContent className="bg-popover">
                             {decks.map((deck) => (
                               <SelectItem key={deck.id} value={deck.id}>
-                                {deck.name} ({deck.cards.length} cards)
+                                {deck.name} ({deck.cards.length} carta{deck.cards.length === 1 ? '' : 's'})
                               </SelectItem>
                             ))}
                           </SelectContent>

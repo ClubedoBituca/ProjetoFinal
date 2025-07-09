@@ -79,7 +79,7 @@ export interface AuthContextType {
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, username: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isLoading: boolean;
 }
 
@@ -93,4 +93,3 @@ export interface DeckContextType {
   setCurrentDeck: (deck: Deck | null) => void;
   isLoading: boolean;
 }
-

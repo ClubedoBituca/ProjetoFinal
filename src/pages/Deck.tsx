@@ -1,14 +1,14 @@
 
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { useDeck } from '@/contexts/DeckContext';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Trash2, Printer } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import DeckCardItem from '@/components/Deck/DeckCardItem';
-import DeckStats from '@/components/Deck/DeckStats';
-import { printDeck } from '@/utils/printUtils';
+import { ArrowLeft, Printer } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+
+import DeckCardItem from "@/components/Deck/DeckCardItem";
+import DeckStats from "@/components/Deck/DeckStats";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDeck } from "@/contexts/DeckContext";
+import { PATHS } from "@/routes/paths";
+import { printDeck } from "@/utils/printUtils";
 
 export default function DeckPage() {
   const { deckId } = useParams();
@@ -26,7 +26,7 @@ export default function DeckPage() {
             <CardDescription>O deck que você está procurando não existe.</CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <Button onClick={() => navigate('/dashboard')} className="w-full">
+            <Button onClick={() => navigate(PATHS.DASHBOARD)} className="w-full">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar ao Dashboard
             </Button>
@@ -56,7 +56,7 @@ export default function DeckPage() {
         <Button 
           variant="outline" 
           size="icon"
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate(PATHS.DASHBOARD)}
           className="hover:bg-accent"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -92,7 +92,7 @@ export default function DeckPage() {
             <CardDescription className="mb-4">
               Este deck ainda não possui cartas. Adicione algumas cartas para começar!
             </CardDescription>
-            <Button onClick={() => navigate('/')}>
+            <Button onClick={() => navigate(PATHS.HOME)}>
               Buscar Cartas
             </Button>
           </CardContent>

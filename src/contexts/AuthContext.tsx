@@ -1,8 +1,7 @@
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { AuthContextType, User } from '../types';
-import { authService } from '../services/auth';
-import { toast } from '../hooks/use-toast';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import type { AuthContextType, User } from "../types";
+import { authService } from "../services/auth";
+import { toast } from "../hooks/use-toast";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -28,8 +27,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(response.user);
       setToken(response.token);
       toast({
-        title: "Conectado",
-        description: `Bem vindo de volta, ${response.user.username}!`,
+        title: "Conectado(a)",
+        description: `Bem vindo(a) de volta, ${response.user.username}!`,
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Tente Novamente';
@@ -52,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setToken(response.token);
       toast({
         title: "Registrado com Sucesso!",
-        description: `Bem vindo ao MTG Deck Builder, ${response.user.username}!`,
+        description: `Bem vindo(a) ao MTG Deck Builder, ${response.user.username}!`,
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'O usuário não foi registrado';
@@ -73,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       setToken(null);
       toast({
-        title: "Desconectado",
+        title: "Desconectado(a)",
         description: "Até a próxima...",
       });
     } catch (error) {
@@ -90,17 +89,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }

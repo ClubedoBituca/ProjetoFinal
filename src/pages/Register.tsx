@@ -1,24 +1,28 @@
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
+import { z } from "zod";
 
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '../contexts/AuthContext';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { PATHS } from "@/routes/paths";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-const registerSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  username: z.string().min(3, 'Username must be at least 3 characters'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+import { useAuth } from "../contexts/AuthContext";
+
+const registerSchema = z
+  .object({
+    email: z.string().email("Email inválido"),
+    username: z.string().min(3, "O username deve ter pelo menos 3 caracteres"),
+    password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "As senhas não correspondem",
+    path: ["confirmPassword"],
+  });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
 
@@ -39,7 +43,7 @@ export default function Register() {
     try {
       setIsLoading(true);
       await registerUser(data.email, data.username, data.password);
-      navigate('/dashboard');
+      navigate(PATHS.DASHBOARD);
     } catch (error) {
       // Error is handled in the auth context
     } finally {
@@ -52,10 +56,7 @@ export default function Register() {
       <div className="w-full max-w-md space-y-6">
         {/* Header */}
         <div className="text-center">
-          <Link 
-            to="/" 
-            className="text-3xl font-bold bg-magic-gradient bg-clip-text text-transparent"
-          >
+          <Link to={PATHS.HOME} className="text-3xl font-bold bg-magic-gradient bg-clip-text text-transparent">
             MTG Deck Builder
           </Link>
           <p className="text-muted-foreground mt-2">Junte-se às fileiras dos Planeswalkers</p>
@@ -80,9 +81,7 @@ export default function Register() {
                   {...register('email')}
                   disabled={isLoading}
                 />
-                {errors.email && (
-                  <p className="text-sm text-destructive">{errors.email.message}</p>
-                )}
+                {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
               </div>
 
               <div className="space-y-2">
@@ -94,9 +93,7 @@ export default function Register() {
                   {...register('username')}
                   disabled={isLoading}
                 />
-                {errors.username && (
-                  <p className="text-sm text-destructive">{errors.username.message}</p>
-                )}
+                {errors.username && <p className="text-sm text-destructive">{errors.username.message}</p>}
               </div>
 
               <div className="space-y-2">
@@ -108,9 +105,7 @@ export default function Register() {
                   {...register('password')}
                   disabled={isLoading}
                 />
-                {errors.password && (
-                  <p className="text-sm text-destructive">{errors.password.message}</p>
-                )}
+                {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
               </div>
 
               <div className="space-y-2">
@@ -122,9 +117,7 @@ export default function Register() {
                   {...register('confirmPassword')}
                   disabled={isLoading}
                 />
-                {errors.confirmPassword && (
-                  <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>
-                )}
+                {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
               </div>
 
               <Button 
@@ -138,11 +131,8 @@ export default function Register() {
 
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
-                Já tem uma conta?{' '}
-                <Link 
-                  to="/login" 
-                  className="text-primary hover:underline font-medium"
-                >
+                Já tem uma conta?{" "}
+                <Link to={PATHS.LOGIN} className="text-primary hover:underline font-medium">
                   Entrar
                 </Link>
               </p>

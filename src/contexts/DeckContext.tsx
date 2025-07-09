@@ -37,8 +37,8 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
   const createDeck = async (name: string, description?: string) => {
     if (!user) {
       toast({
-        title: "Authentication required",
-        description: "Please log in to create decks",
+        title: "Autenticação necessária",
+        description: "Por favor, faça login para criar decks",
         variant: "destructive",
       });
       return;
@@ -53,13 +53,13 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
       setDecks(updatedDecks);
 
       toast({
-        title: "Deck created",
-        description: `"${name}" has been created successfully`,
+        title: "Deck criado",
+        description: `"${name}" foi criado com sucesso`,
       });
     } catch (error) {
       toast({
-        title: "Error creating deck",
-        description: "Please try again",
+        title: "Erro ao criar deck",
+        description: "Por favor, tente novamente",
         variant: "destructive",
       });
     } finally {
@@ -82,13 +82,13 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
       }
 
       toast({
-        title: "Deck deleted",
-        description: `"${deckToDelete?.name}" has been deleted`,
+        title: "Deck apagado",
+        description: `"${deckToDelete?.name}" foi apagado`,
       });
     } catch (error) {
       toast({
-        title: "Error deleting deck",
-        description: "Please try again",
+        title: "Erro ao apagar o deck",
+        description: "Por favor, tente novamente",
         variant: "destructive",
       });
     } finally {
@@ -105,13 +105,13 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
       setDecks((prevDecks) => prevDecks.map((deck) => (deck.id === deckId ? updatedDeck : deck)));
 
       toast({
-        title: "Card added",
-        description: `${quantity}x ${card.name} added to ${updatedDeck.name}`,
+        title: "Carta adicionada",
+        description: `${quantity}x ${card.name} adicionada em ${updatedDeck.name}`,
       });
     } catch (error) {
       toast({
-        title: "Error adding card",
-        description: "Please try again",
+        title: "Erro ao adicionar carta",
+        description: "Por favor, tente novamente",
         variant: "destructive",
       });
     } finally {
@@ -132,13 +132,13 @@ export function DeckProvider({ children }: { children: React.ReactNode }) {
       setDecks((prevDecks) => prevDecks.map((deck) => (deck.id === deckId ? updatedDeck : deck)));
 
       toast({
-        title: "Card removed",
-        description: `${cardToRemove?.card.name} removed from ${updatedDeck.name}`,
+        title: "Carta removida",
+        description: `${cardToRemove?.card.name} removida de ${updatedDeck.name}`,
       });
     } catch (error) {
       toast({
-        title: "Error removing card",
-        description: "Please try again",
+        title: "Falha ao remover carta",
+        description: "Por favor, tente novamente",
         variant: "destructive",
       });
     } finally {
