@@ -1,52 +1,65 @@
+import { useState } from "react";
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card as CardType } from '../../types';
-import { useAuth } from '../../contexts/AuthContext';
-import { getCardImage } from '../../services/getCardImage';
+import { Button } from "@/components/ui/button";
 
+import { useAuth } from "../../contexts/AuthContext";
+import { getCardImage } from "../../services/getCardImage";
+import { Card as CardType } from "../../types";
 
 interface CardItemProps {
   card: CardType;
   onClick: () => void;
-  onAddToDeck?: () => void;
+  onAddToDeck?: () => Promise<void>;
   quantity?: number;
 }
 
 export default function CardItem({ card, onClick, onAddToDeck, quantity }: CardItemProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const { user } = useAuth();
 
   const formatManaCost = (manaCost: string) => {
     if (!manaCost) return null;
-    
+
     // Convert mana symbols to readable format
     return manaCost
-      .replace(/{W}/g, '⚪')
-      .replace(/{U}/g, '🔵')
-      .replace(/{B}/g, '⚫')
-      .replace(/{R}/g, '🔴')
-      .replace(/{G}/g, '🟢')
-      .replace(/{([0-9]+)}/g, '$1')
-      .replace(/{([XYZC])}/g, '$1');
+      .replace(/{W}/g, "⚪")
+      .replace(/{U}/g, "🔵")
+      .replace(/{B}/g, "⚫")
+      .replace(/{R}/g, "🔴")
+      .replace(/{G}/g, "🟢")
+      .replace(/{([0-9]+)}/g, "$1")
+      .replace(/{([XYZC])}/g, "$1");
   };
 
   const getRarityColor = (rarity: string) => {
     switch (rarity.toLowerCase()) {
-      case 'common': return 'text-slate-600';
-      case 'uncommon': return 'text-slate-400';
-      case 'rare': return 'text-yellow-600';
-      case 'mythic': return 'text-orange-600';
-      default: return 'text-muted-foreground';
+      case "common":
+        return "text-slate-600";
+      case "uncommon":
+        return "text-slate-400";
+      case "rare":
+        return "text-yellow-600";
+      case "mythic":
+        return "text-orange-600";
+      default:
+        return "text-muted-foreground";
     }
+  };
+
+  const addToDeckClickHandler = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setIsLoading(true);
+
+    await onAddToDeck();
+
+    setIsLoading(false);
   };
 
   return (
     <div className="magic-card group cursor-pointer transition-all duration-300 hover:scale-105">
       {/* Card Image */}
-      <div 
-        className="aspect-[5/7] bg-muted rounded-lg overflow-hidden relative"
-        onClick={onClick}
-      >
+      <div className="aspect-[5/7] bg-muted rounded-lg overflow-hidden relative" onClick={onClick}>
         {(() => {
           const image = getCardImage(card);
           return image ? (
@@ -65,7 +78,7 @@ export default function CardItem({ card, onClick, onAddToDeck, quantity }: CardI
             </div>
           );
         })()}
-        
+
         {/* Quantity badge */}
         {quantity && quantity > 1 && (
           <div className="absolute top-2 right-2 bg-primary text-primary-foreground rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold">
@@ -81,39 +94,24 @@ export default function CardItem({ card, onClick, onAddToDeck, quantity }: CardI
             {card.name}
           </h3>
           {card.mana_cost && (
-            <span className="text-xs font-mono ml-2 flex-shrink-0">
-              {formatManaCost(card.mana_cost)}
-            </span>
+            <span className="text-xs font-mono ml-2 flex-shrink-0">{formatManaCost(card.mana_cost)}</span>
           )}
         </div>
-        
+
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <span className="truncate">{card.type_line}</span>
-          <span className={`font-medium capitalize ${getRarityColor(card.rarity)}`}>
-            {card.rarity}
-          </span>
+          <span className={`font-medium capitalize ${getRarityColor(card.rarity)}`}>{card.rarity}</span>
         </div>
-        
+
         <div className="flex items-center justify-between text-xs">
           <span className="text-muted-foreground">{card.set_name}</span>
-          {card.prices?.usd && (
-            <span className="font-medium text-green-600">
-              ${card.prices.usd}
-            </span>
-          )}
+          {card.prices?.usd && <span className="font-medium text-green-600">${card.prices.usd}</span>}
         </div>
 
         {/* Add to Deck Button */}
         {user && onAddToDeck && (
-          <Button
-            size="sm"
-            className="w-full mt-2"
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddToDeck();
-            }}
-          >
-            Adicionar ao Deck
+          <Button disabled={isLoading} size="sm" className="w-full mt-2" onClick={addToDeckClickHandler}>
+            {isLoading ? "Adicionando" : "Adicionar ao Deck"}
           </Button>
         )}
       </div>

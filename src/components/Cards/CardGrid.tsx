@@ -1,12 +1,10 @@
+import CardItem from "./CardItem";
 
-import React from 'react';
-import type { Card } from '../../types';
-import CardItem from './CardItem';
-
+import type { Card } from "../../types";
 interface CardGridProps {
   cards: Card[];
   onCardClick: (card: Card) => void;
-  onAddToDeck?: (card: Card) => void;
+  onAddToDeck?: (card: Card) => Promise<void>;
   isLoading?: boolean;
 }
 
@@ -44,7 +42,7 @@ export default function CardGrid({ cards, onCardClick, onAddToDeck, isLoading }:
           key={card.id}
           card={card}
           onClick={() => onCardClick(card)}
-          onAddToDeck={onAddToDeck ? () => onAddToDeck(card) : undefined}
+          onAddToDeck={onAddToDeck ? async () => await onAddToDeck(card) : undefined}
         />
       ))}
     </div>
