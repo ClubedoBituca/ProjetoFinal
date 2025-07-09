@@ -1,4 +1,3 @@
-
 # 🧙‍♂️ Mana Vault Builder
 
 Um aplicativo web para colecionadores e jogadores de **Magic: The Gathering**. Com integração à [API da Scryfall](https://scryfall.com/docs/api), permite realizar buscas avançadas de cartas com visualização em grid e estrutura modular pronta para expansão (como decks, autenticação e exportação).
@@ -18,16 +17,20 @@ Um aplicativo web para colecionadores e jogadores de **Magic: The Gathering**. C
 
 ## 📁 Estrutura do Projeto
 
+```text
 src/
 ├── components/
-│   └── ui/           → Componentes visuais (CardGrid, Navbar, etc.)
-├── hooks/            → Custom hooks (ex: uso de mobile e toast)
-├── lib/              → Funções auxiliares/utilitárias
-├── pages/            → Páginas principais (Index, NotFound)
-├── services/         → Serviços externos (integração com Scryfall)
-├── types/            → Tipagens globais
-├── App.tsx           → Componente raiz
-├── main.tsx          → Ponto de entrada
+│ └── ui/ → Componentes visuais (CardGrid, Navbar, etc.)
+├── hooks/ → Custom hooks (ex: uso de mobile e toast)
+├── lib/ → Funções auxiliares
+├── pages/ → Páginas principais (Login, Deck, NotFound, etc)
+├── pages/ → Configuração das rotas das páginas privadas, públicas e compartilhadas
+├── services/ → Serviços externos (integração com Scryfall) e backend interno
+├── types/ → Tipagens globais
+├── types/ → Funções utilitárias (fetch autenticado, imprimir pdf)
+├── App.tsx → Componente raiz
+├── main.tsx → Ponto de entrada
+```
 
 ---
 
@@ -36,6 +39,9 @@ src/
 - 🔍 Busca de cartas com resultados em tempo real
 - 🧱 Exibição em grade (grid) com visual moderno e responsivo
 - 📱 Suporte completo a dispositivos móveis
+- 🪪 Login e autenticação
+- ⚙️ Criação e gerenciamento de decks
+- 📄 Exportação de decks para PDF
 - 🧩 Código modular e organizado para expansão
 
 ---
@@ -43,17 +49,29 @@ src/
 ## ▶️ Como Rodar o Projeto
 
 ### Pré-requisitos
+
 - Node.js versão 18 ou superior
 - npm ou bun instalado
 
 ### Passos
 
-git clone https://github.com/seu-usuario/mana-vault-builder.git
-cd mana-vault-builder
-npm install
-npm run dev
+`git clone https://github.com/ClubedoBituca/ProjetoFinal.git`
 
-Abra o navegador em: http://localhost:5173
+`cd ProjetoFinal`
+
+`npm install`
+
+`npm run dev`
+
+Não se esqueça de executar também o backend:
+
+`cd backend`
+
+`npm install`
+
+`npm run dev`
+
+Abra o navegador em: http://localhost:8080
 
 ---
 
@@ -61,7 +79,7 @@ Abra o navegador em: http://localhost:5173
 
 A integração com a Scryfall é feita no arquivo:
 
-src/services/scryfall.ts
+src/services/api.ts
 
 Esse serviço utiliza `fetch` para buscar informações de cartas, edições e símbolos. É possível expandir facilmente para novas rotas da API.
 
@@ -71,17 +89,10 @@ Esse serviço utiliza `fetch` para buscar informações de cartas, edições e s
 
 > Testes ainda não implementados.
 
-Sugestões futuras:
-- Testes unitários com Vitest
-- Testes E2E com Cypress
-
 ---
 
 ## 📌 Possíveis Expansões
 
-- [ ] Login e autenticação com NextAuth
-- [ ] Criação e gerenciamento de decks
-- [ ] Exportação de decks para PDF ou .txt
 - [ ] Compartilhamento de decks entre usuários
 - [ ] Exportação para MTG Arena ou Cockatrice
 
@@ -89,16 +100,13 @@ Sugestões futuras:
 
 ## 📦 Deploy
 
-Recomendado utilizar:
-- Vercel
-- GitHub Actions para CI/CD
-- Variáveis de ambiente seguras (.env)
+> Deploy ainda não implementado.
 
 ---
 
 ## 📄 Licença
 
-Este projeto está licenciado sob a Licença MIT.  
+Este projeto está licenciado sob a Licença MIT.
 Veja o arquivo LICENSE para mais detalhes.
 
 ---
