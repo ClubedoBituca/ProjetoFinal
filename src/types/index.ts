@@ -8,7 +8,7 @@ export interface User {
 export interface Card {
   id: string;
   name: string;
-  lang?: string; // 👈 adicione essa linha
+  lang?: string; 
   mana_cost: string;
   cmc: number;
   type_line: string;

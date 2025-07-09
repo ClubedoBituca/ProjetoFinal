@@ -78,7 +78,7 @@ export default function Header() {
                     className="flex items-center space-x-2 text-destructive focus:text-destructive"
                   >
                     <LogOut className="w-4 h-4" />
-                    <span>Logout</span>
+                    <span>Sair</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

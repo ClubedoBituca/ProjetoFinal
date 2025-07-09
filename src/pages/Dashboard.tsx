@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PATHS } from "@/routes/paths";
 import { Deck, DeckCard } from "@/types";
+import { ConfirmDeleteDialog } from "@/utils/ConfirmDelete";
 
 import Header from "../components/Layout/Header";
 import { useAuth } from "../contexts/AuthContext";
@@ -36,11 +37,6 @@ export default function Dashboard() {
     }
   };
 
-  const handleDeleteDeck = async (deckId: string) => {
-    if (window.confirm('Tem certeza que deseja apagar esse deck?')) {
-      await deleteDeck(deckId);
-    }
-  };
 
   const getTotalCards = (deck: Deck) => {
     return deck.cards.reduce((total: number, deckCard: DeckCard) => total + deckCard.quantity, 0);
@@ -203,14 +199,19 @@ export default function Dashboard() {
                         </p>
                       )}
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleDeleteDeck(deck.id)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
+                    <ConfirmDeleteDialog
+                      onConfirm={() => deleteDeck(deck.id)}
+                      title="Apagar Deck"
+                      description="Tem certeza que deseja apagar esse deck? Esta ação não poderá ser desfeita."
                     >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </ConfirmDeleteDialog>
                   </div>
                 </CardHeader>
                 <CardContent>

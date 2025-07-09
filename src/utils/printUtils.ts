@@ -1,5 +1,6 @@
 
 import type { Deck } from '@/types';
+import { getCardImage } from "@/services/getCardImage"
 
 const CARD_WIDTH_MM = 63.5;
 const CARD_HEIGHT_MM = 88;
@@ -32,7 +33,7 @@ export const printDeck = (deck: Deck) => {
     for (let i = 0; i < deckCard.quantity; i++) {
       expandedCards.push({
         name: deckCard.card.name,
-        imageUrl: deckCard.card.image_uris?.normal || '/placeholder.svg',
+        imageUrl: getCardImage(deckCard.card) || '/placeholder.svg',
         id: `${deckCard.card.id}_${i}`
       });
     }
